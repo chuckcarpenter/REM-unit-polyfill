@@ -53,7 +53,7 @@
         var remCurrent = response.responseText.match(remPattern);
         if( current !== null && current.length !== 0 ){
             found = found.concat( current ); //save all of the blocks of rules with rem in a property
-            foundProps = found.concat( remCurrent ); //save all of the properties with rem
+            foundProps = foundProps.concat( remCurrent ); //save all of the properties with rem
         }
         if( i === sheets.og-1 ){
             buildIt();
@@ -90,10 +90,10 @@
                 rules = rules.replace( found[i],css[i] ); //replace old rules with our processed rules
             }
         }
+        rules = removeComments( rules );
         var remcss = document.createElement( 'style' );
         remcss.setAttribute( 'type', 'text/css' );
         remcss.id = 'remReplace';
-        alert(rules);
         remcss.innerHTML = rules;
         document.getElementsByTagName( 'head' )[0].appendChild( remcss );   //create the new element
     },
@@ -112,7 +112,7 @@
     },
 
     removeComments =  function( css ) {
-        return css.replace(/\*([^*]|[\r\n]|(\*+([^*\/]|[\r\n])))*\*+/, ""); //work in progress
+    	return css.replace(/\/\*[\w\d\.\,\[\]\^\>\<\+\~\|\-\_\$\#\"\'\/\*\\\=\s\{\}\(\)]*\*\//g, "");
     },
 
     getXMLHttpRequest = function () { //we're gonna check if our browser will let us use AJAX
@@ -125,6 +125,7 @@
         var rules = ''; //initialize the rules variable in this scope so it can be used later
         var sheets = []; //initialize the array holding the sheets for use later
         var found = []; //initialize the array holding the found rules for use later
+    	var foundProps = []; //initialize the array holding the found properties for use later
         var css = []; //initialize the array holding the parsed rules for use later
         var body = document.getElementsByTagName("body")[0];
         var fontSize = "";
