@@ -1,0 +1,14 @@
+/* TEST comments for the CSS */
+
+html {
+    font-size: 62.5%;
+        -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+    line-height: 1.6;
+}
+.test {
+	background-color:red;
+	width: 10em;
+	height: 3.2rem;
+}
+p {font-size: 1.4rem;}
