@@ -133,9 +133,8 @@
         } else if (window.getComputedStyle)
             fontSize = document.defaultView.getComputedStyle(body, null).getPropertyValue("font-size").replace("px",""); //find font-size in body element
         processSheets();
-        console.log("REM not here");
     } else {
-        console.log('You have REM');
+        // do nothing, you are awesome and have REM support
     }
 
 })(window);
