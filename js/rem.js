@@ -111,7 +111,7 @@
     },
 
     removeComments =  function( css ) {
-    	return css.replace(/\/\*[\w\d\.\,\[\]\^\>\<\+\~\|\-\_\$\#\"\'\/\*\\\=\s\{\}\(\)]*\*\//g, "");
+        return css.replace(/\/\*[\w\d\.\,\[\]\^\>\<\+\~\|\-\_\$\#\"\'\/\*\\\=\s\{\}\(\)]*\*\//g, "");
     },
 
     getXMLHttpRequest = function () { //we're gonna check if our browser will let us use AJAX
