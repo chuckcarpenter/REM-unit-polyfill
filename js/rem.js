@@ -77,17 +77,16 @@
     },
 
     parseIt = function () { //replace each set of parentheses with evaluated content
-        for( var i = 0; i < found.length; i++ ){
-            css[i] = Math.round( eval(found[i].substr(0,found[i].length-3)*fontSize) ) + 'px';
+        for( var i = 0; i < foundProps.length; i++ ){
+            css[i] = Math.round( eval(foundProps[i].substr(0,foundProps[i].length-3)*fontSize) ) + 'px';
         }
-
         loadCSS();
     },
 
     loadCSS = function () { //replace and load the new rules
         for( var i = 0; i < css.length; i++ ){ //only run this loop as many times as css has entries
             if( css[i] ){
-                rules = rules.replace( found[i],css[i] ); //replace old rules with our processed rules
+                rules = rules.replace( foundProps[i],css[i] ); //replace old rules with our processed rules
             }
         }
         rules = removeComments( rules );
@@ -122,13 +121,13 @@
     };
 
     if( !cssremunit() ){ //this checks if the rem value is supported
-        var rules = ''; //initialize the rules variable in this scope so it can be used later
-        var sheets = []; //initialize the array holding the sheets for use later
-        var found = []; //initialize the array holding the found rules for use later
-    	var foundProps = []; //initialize the array holding the found properties for use later
-        var css = []; //initialize the array holding the parsed rules for use later
-        var body = document.getElementsByTagName("body")[0];
-        var fontSize = "";
+        var rules = '', //initialize the rules variable in this scope so it can be used later
+            sheets = [], //initialize the array holding the sheets for use later
+            found = [], //initialize the array holding the found rules for use later
+            foundProps = [], //initialize the array holding the found properties for use later
+            css = [], //initialize the array holding the parsed rules for use later
+            body = document.getElementsByTagName("body")[0],
+            fontSize = "";
         if (body.currentStyle) {
             fontSize = (body.currentStyle["fontSize"].replace("%","") / 100) * 16; //IE8 returns the percentage while other browsers return the computed value
         } else if (window.getComputedStyle)
