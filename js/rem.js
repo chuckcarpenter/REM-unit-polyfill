@@ -93,8 +93,8 @@
         var remcss = document.createElement( 'style' );
         remcss.setAttribute( 'type', 'text/css' );
         remcss.id = 'remReplace';
-        remcss.innerHTML = rules;
         document.getElementsByTagName( 'head' )[0].appendChild( remcss );   //create the new element
+        remcss.styleSheet.cssText = rules; // IE8 will not support innerHTML on read-only elements, such as STYLE
     },
 
     xhr = function ( url, callback, i ) { //create new XMLHttpRequest object and run it
