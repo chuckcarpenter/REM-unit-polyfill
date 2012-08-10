@@ -5,7 +5,7 @@ No fluff here. You can load this conditionally or just include a reference in yo
 
 An example is included that is small and you can bring up in your favorite browser to see how it works. Once lack of support is determined, the polyfill reads all links for stylesheets and finds selectors that have rules using the REM unit. It then recalculates those to PX and writes them in the head to override in the cascade. Magic.
 
-Special shout out to [Lucas Severn](https://github.com/lsvx) for the first version and all the amazing RegEx that's gone into this. 
+Special shout out to [Lucas Serven](https://github.com/lsvx) for the first version and all the amazing RegEx that's gone into this. 
 
 It's been tested on a large production publishing site and worked great in with minor performance differences. 
 
