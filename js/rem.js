@@ -47,7 +47,7 @@
     },
     
     matchcss = function ( response, i ) { //collect all of the rules from the xhr response texts and match them to a pattern
-        var pattern = /[\w\d\.\,\[\]\^\>\/<\+\~\|\-\_\$\#\"\'\/\*\\\=\s]+\{[\w\d\.\-\(\)\%\#\:\;\'\"\/\*\\\s]+\d*\.{0,1}\d+rem[\w\d\.\-\(\)\%\#\:\;\'\"\/\*\\\s]+\}/g; //find selectors that use rem in one or more of their rules
+        var pattern = /[\w\d\.\,\[\]\^\>\/\<\+\~\|\-\_\$\#\"\'\/\*\\\=\s]+\{[\w\d\.\-\(\)\%\#\:\;\'\"\/\*\\\s]+\d*\.{0,1}\d+rem[\w\d\.\-\(\)\%\#\:\;\'\"\/\*\\\s]+\}/g; //find selectors that use rem in one or more of their rules
         var current = response.responseText.match(pattern);
         var remPattern =/\d*\.{0,1}\d+rem/g;
         var remCurrent = response.responseText.match(remPattern);
