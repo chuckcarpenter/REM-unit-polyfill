@@ -1,22 +1,6 @@
-(function(window, undefined) {
-    // replacement for IE8 not using getComputedStyle
-    // if ( !window.getComputedStyle ) {
-    //     window.getComputedStyle = function( el, pseudo ) {
-    //         this.el = el;
-    //         this.getPropertyValue = function( prop ) {
-    //             var re = /(\-([a-z]){1})/g;
-    //             if ( prop === 'float' ) prop = 'styleFloat';
-    //             if ( re.test(prop) ) {
-    //                 prop = prop.replace(re, function () {
-    //                     return arguments[2].toUpperCase();
-    //                 });
-    //             }
-    //             return el.currentStyle[prop] ? el.currentStyle[prop] : null;
-    //         };
-    //         return this;
-    //     };
-    // }
+(function (window, undefined) {
 
+    // test for REM unit support
     var cssremunit =  function() {
         var div = document.createElement( 'div' );
             div.style.cssText = 'font-size: 1rem;';
@@ -24,9 +8,10 @@
         return (/rem/).test(div.style.fontSize);
     },
 
-    isStyleSheet = function() {
-        var styles = document.getElementsByTagName('link');
-        var filteredStyles = [];
+    // filter returned link nodes for stylesheets
+    isStyleSheet = function () {
+        var styles = document.getElementsByTagName('link'),
+            filteredStyles = [];
         
         for (i = 0; i < styles.length; i++) {
              if ( styles[i].rel === 'stylesheet' )
@@ -47,10 +32,10 @@
     },
     
     matchcss = function ( response, i ) { //collect all of the rules from the xhr response texts and match them to a pattern
-        var pattern = /[\w\d\.\,\[\]\^\>\/\<\+\~\|\-\_\$\#\"\'\/\*\\\=\s]+\{[\w\d\.\-\(\)\%\#\:\;\'\"\/\*\\\s]+\d*\.{0,1}\d+rem[\w\d\.\-\(\)\%\#\:\;\'\"\/\*\\\s]+\}/g; //find selectors that use rem in one or more of their rules
-        var current = response.responseText.match(pattern);
-        var remPattern =/\d*\.{0,1}\d+rem/g;
-        var remCurrent = response.responseText.match(remPattern);
+        var pattern = /[\w\d\.\,\[\]\^\>\/\<\+\~\|\-\_\$\#\"\'\/\*\\\=\s]+\{[\w\d\.\-\(\)\%\#\:\;\'\"\/\*\\\s]+\d*\.{0,1}\d+rem[\w\d\.\-\(\)\%\#\:\;\'\"\/\*\\\s]+\}/g, //find selectors that use rem in one or more of their rules
+            current = response.responseText.match(pattern),
+            remPattern =/\d*\.{0,1}\d+rem/g,
+            remCurrent = response.responseText.match(remPattern);
         if( current !== null && current.length !== 0 ){
             found = found.concat( current ); //save all of the blocks of rules with rem in a property
             foundProps = foundProps.concat( remCurrent ); //save all of the properties with rem
@@ -60,7 +45,7 @@
         }
     },
 
-    buildIt = function() { //first build each individual rule from elements in the found array and then add it to the string of rules.
+    buildIt = function () { //first build each individual rule from elements in the found array and then add it to the string of rules.
         var pattern = /[\w\d\.\-\(\)\%\#\:\'\"\/\*\\\s]+\d*\.{0,1}\d+rem[\w\d\.\-\(\)\%\#\:\'\"\/\*\\\s]*;/g; //find properties with rem values in them
         for( var i = 0; i < found.length; i++ ){
             rules = rules + found[i].substr(0,found[i].indexOf("{")+1); //save the selector portion of each rule with a rem value
@@ -110,7 +95,7 @@
         };
     },
 
-    removeComments =  function( css ) {
+    removeComments =  function ( css ) {
         return css.replace(/\/\*[\w\d\.\,\[\]\^\>\<\+\~\|\-\_\$\#\"\'\/\*\\\=\s\{\}\(\)]*\*\//g, "");
     },
 
@@ -126,12 +111,12 @@
             found = [], //initialize the array holding the found rules for use later
             foundProps = [], //initialize the array holding the found properties for use later
             css = [], //initialize the array holding the parsed rules for use later
-            body = document.getElementsByTagName("body")[0],
-            fontSize = "";
+            body = document.getElementsByTagName('body')[0],
+            fontSize = '';
         if (body.currentStyle) {
-            fontSize = (body.currentStyle["fontSize"].replace("%","") / 100) * 16; //IE8 returns the percentage while other browsers return the computed value
+            fontSize = (body.currentStyle['fontSize'].replace('%', '') / 100) * 16; //IE8 returns the percentage while other browsers return the computed value
         } else if (window.getComputedStyle)
-            fontSize = document.defaultView.getComputedStyle(body, null).getPropertyValue("font-size").replace("px",""); //find font-size in body element
+            fontSize = document.defaultView.getComputedStyle(body, null).getPropertyValue('font-size').replace('px', ''); //find font-size in body element
         processSheets();
     } else {
         // do nothing, you are awesome and have REM support
