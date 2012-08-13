@@ -32,7 +32,7 @@
     },
     
     matchcss = function ( response, i ) { //collect all of the rules from the xhr response texts and match them to a pattern
-        var pattern = /[\w\d\.\,\:\[\]\^\>\/\<\+\~\|\-\_\$\#\"\'\/\*\\\=\s]+\{[\w\d\.\-\(\)\%\#\:\;\'\"\/\*\\\s]+\d*\.{0,1}\d+rem[\w\d\.\-\(\)\%\#\:\;\'\"\/\*\\\s]+\}/g, //find selectors that use rem in one or more of their rules
+        var pattern = /[\w\d\.\,\:\[\]\^\>\/\<\+\~\|\-\_\$\#\"\'\/\*\\\=\s]+\{[\w\d\.\,\-\(\)\%\#\:\;\'\"\/\*\\\s]+\d*\.{0,1}\d+rem[\w\d\.\,\-\(\)\%\#\:\;\'\"\/\*\\\s]+\}/g, //find selectors that use rem in one or more of their rules
             current = response.responseText.match(pattern),
             remPattern =/\d*\.{0,1}\d+rem/g,
             remCurrent = response.responseText.match(remPattern);
@@ -46,7 +46,7 @@
     },
 
     buildIt = function () { //first build each individual rule from elements in the found array and then add it to the string of rules.
-        var pattern = /[\w\d\.\-\(\)\%\#\:\'\"\/\*\\\s]+\d*\.{0,1}\d+rem[\w\d\.\-\(\)\%\#\:\'\"\/\*\\\s]*;/g; //find properties with rem values in them
+        var pattern = /[\w\d\.\,\-\(\)\%\#\:\'\"\/\*\\\s]+\d*\.{0,1}\d+rem[\w\d\.\,\-\(\)\%\#\:\'\"\/\*\\\s]*;/g; //find properties with rem values in them
         for( var i = 0; i < found.length; i++ ){
             rules = rules + found[i].substr(0,found[i].indexOf("{")+1); //save the selector portion of each rule with a rem value
             var current = found[i].match( pattern );
