@@ -14,8 +14,10 @@
             filteredStyles = [];
         
         for (i = 0; i < styles.length; i++) {
-             if ( styles[i].rel === 'stylesheet' )
+            // Ignore stylesheets with data-norem attribute as well as links to other items
+            if ( styles[i].rel === 'stylesheet' || styles[i].hasAttribute('data-norem') ) {
                 filteredStyles.push( styles[i] );
+            }
         }
 
         return filteredStyles;
@@ -27,7 +29,7 @@
         sheets.og = sheets.length; //store the original length of sheets as a property
         for( var i = 0; i < sheets.length; i++ ){
             links[i] = sheets[i].href;
-            xhr( links[i], matchcss, i );
+            getLinks( links[i], matchcss, i );
         }
     },
     
@@ -82,41 +84,50 @@
         remcss.styleSheet.cssText = rules; // IE8 will not support innerHTML on read-only elements, such as STYLE
     },
 
-    xhr = function ( url, callback, i ) { //create new XMLHttpRequest object and run it
-        var xhr = getXMLHttpRequest();
-        xhr.open( 'GET', url, true );
-        xhr.send();
-        xhr.onreadystatechange = function() {
-            if ( xhr.readyState === 4 ){
-                callback(xhr, i);
-            } else { //callback function on AJAX error
-                
-            }
-        };
+    getLinks = function ( url, callback, i ) { //create new XMLHttpRequest object and run it
+        //this ensures IE cross domain isn't an issue, only on IE8
+        // make sure access control is set to allow * if hosting on other domain
+        if ( window.XDomainRequest ) {
+            var xdr = new XDomainRequest();
+            xdr.open('GET', url);
+            xdr.onload = callback(xhr, i);
+            xdr.onerror = function() {
+                console.log('Request to' + url + 'failed');
+            };
+            xdr.send();
+        } else if ( window.XMLHttpRequest ) {
+            var xhr = new XMLHttpRequest();
+            xhr.open( 'GET', url, true );
+            xhr.send();
+            xhr.onreadystatechange = function() {
+                if ( xhr.readyState === 4 ){
+                    callback(xhr, i);
+                } else { //callback function on AJAX error
+                    console.log('Request to' + url + 'failed');
+                }
+            };
+        }
     },
 
     removeComments =  function ( css ) {
         return css.replace(/\/\*[\w\d\.\,\[\]\^\>\<\+\~\|\-\_\$\#\"\'\/\*\\\=\s\{\}\(\)]*\*\//g, "");
-    },
-
-    getXMLHttpRequest = function () { //we're gonna check if our browser will let us use AJAX
-        if(window.XMLHttpRequest){
-            return new XMLHttpRequest();
-        }
     };
 
-    if( !cssremunit() ){ //this checks if the rem value is supported
+    if ( !cssremunit() ) { //this checks if the rem value is supported
         var rules = '', //initialize the rules variable in this scope so it can be used later
             sheets = [], //initialize the array holding the sheets for use later
             found = [], //initialize the array holding the found rules for use later
             foundProps = [], //initialize the array holding the found properties for use later
             css = [], //initialize the array holding the parsed rules for use later
-            body = document.getElementsByTagName('body')[0],
+            body = document.getElementsByTagName('body')[0] || document.body || document.getElementsByTagName('html')[0],
             fontSize = '';
+        
         if (body.currentStyle) {
             fontSize = (body.currentStyle['fontSize'].replace('%', '') / 100) * 16; //IE8 returns the percentage while other browsers return the computed value
-        } else if (window.getComputedStyle)
+        } else if (window.getComputedStyle) {
             fontSize = document.defaultView.getComputedStyle(body, null).getPropertyValue('font-size').replace('px', ''); //find font-size in body element
+        }
+
         processSheets();
     } else {
         // do nothing, you are awesome and have REM support
