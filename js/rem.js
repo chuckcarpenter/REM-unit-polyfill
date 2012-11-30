@@ -12,12 +12,11 @@
     isStyleSheet = function () {
         var styles = document.getElementsByTagName('link'),
             filteredStyles = [];
-        
         for (i = 0; i < styles.length; i++) {
-             if ( styles[i].rel === 'stylesheet' )
-                filteredStyles.push( styles[i] );
+            if ( styles[i].rel.toLowerCase() === 'stylesheet' )
+    			filteredStyles.push( styles[i] );
         }
-
+		
         return filteredStyles;
     },
     
@@ -62,9 +61,11 @@
     },
 
     parseIt = function () { //replace each set of parentheses with evaluated content
+		
         for( var i = 0; i < foundProps.length; i++ ){
             css[i] = Math.round( eval(foundProps[i].substr(0,foundProps[i].length-3)*fontSize) ) + 'px';
         }
+		
         loadCSS();
     },
 
@@ -89,9 +90,7 @@
         xhr.onreadystatechange = function() {
             if ( xhr.readyState === 4 ){
                 callback(xhr, i);
-            } else { //callback function on AJAX error
-                
-            }
+            } else { /*callback function on AJAX error*/ }
         };
     },
 
@@ -104,7 +103,7 @@
             return new XMLHttpRequest();
         }
     };
-
+	
     if( !cssremunit() ){ //this checks if the rem value is supported
         var rules = '', //initialize the rules variable in this scope so it can be used later
             sheets = [], //initialize the array holding the sheets for use later
@@ -114,7 +113,11 @@
             body = document.getElementsByTagName('body')[0],
             fontSize = '';
         if (body.currentStyle) {
-            fontSize = (body.currentStyle['fontSize'].replace('%', '') / 100) * 16; //IE8 returns the percentage while other browsers return the computed value
+			if ( body.currentStyle['fontSize'].indexOf("px") == -1 ){
+				fontSize = (body.currentStyle['fontSize'].replace('%', '') / 100) * 16; //IE8 returns the percentage while other browsers return the computed value
+			} else{
+				fontSize = body.currentStyle['fontSize'].replace('px', '');
+			}
         } else if (window.getComputedStyle)
             fontSize = document.defaultView.getComputedStyle(body, null).getPropertyValue('font-size').replace('px', ''); //find font-size in body element
         processSheets();
