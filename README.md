@@ -10,3 +10,8 @@ Special shout out to [Lucas Serven](https://github.com/lsvx) for the first versi
 It's been tested on a large production publishing site and worked great in with minor performance differences. 
 
 We're always open to suggestions and/or improvements, so please fork!
+
+License
+=======
+
+This content is released under the [MIT License](http://chuckcarpenter.mit-license.org).
