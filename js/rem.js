@@ -86,13 +86,21 @@
         var xhr = getXMLHttpRequest();
         xhr.open( 'GET', url, true );
         xhr.send();
-        xhr.onreadystatechange = function() {
-            if ( xhr.readyState === 4 ){
-                callback(xhr, i);
-            } else { //callback function on AJAX error
-                
-            }
-        };
+        if(window.XMLHttpRequest){ //If browser supports AJAX
+            xhr.onreadystatechange = function() {
+                if ( xhr.readyState === 4 ){
+                    callback(xhr, i);
+                } else { //callback function on AJAX error
+                }
+            };
+         } else { // Then we expect the browser should support AJAX through ActiveX (basically used to target IE6 and IE7)
+                xhr.onreadystatechange = new function() { //IE6 and IE7 need the "new function()" syntax to work properly
+                if ( xhr.readyState === 4 ){
+                    callback(xhr, i);
+                } else { //callback function on AJAX error
+                }
+            };
+         }
     },
 
     removeComments = function ( css ) {
@@ -110,6 +118,8 @@
     getXMLHttpRequest = function () { //we're gonna check if our browser will let us use AJAX
         if(window.XMLHttpRequest){
             return new XMLHttpRequest();
+        } else { //if XMLHttpRequest doesn't work
+            return new ActiveXObject("Microsoft.XMLHTTP"); //then we'll instead use AJAX through ActiveX for IE6/IE7
         }
     };
 
