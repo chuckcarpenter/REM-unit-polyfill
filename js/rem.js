@@ -52,7 +52,7 @@
             var current = found[i].match( pattern );
             for( var j = 0; j<current.length; j++ ){ //build a new set of with only the selector and properties that have rem in the value
                 rules = rules + current[j];
-                if( j === current.length-1 ){
+                if( j === current.length-1 && rules[rules.length-1] !== "}" ){
                     rules = rules + "\n}";
                 }
             }
