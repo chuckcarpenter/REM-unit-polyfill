@@ -12,12 +12,11 @@
     isStyleSheet = function () {
         var styles = document.getElementsByTagName('link'),
             filteredStyles = [];
-        
         for (i = 0; i < styles.length; i++) {
-             if ( styles[i].rel === 'stylesheet' )
+            if ( styles[i].rel.toLowerCase() === 'stylesheet' )
                 filteredStyles.push( styles[i] );
         }
-
+        
         return filteredStyles;
     },
     
@@ -62,9 +61,11 @@
     },
 
     parseIt = function () { //replace each set of parentheses with evaluated content
+        
         for( var i = 0; i < foundProps.length; i++ ){
             css[i] = Math.round( eval(foundProps[i].substr(0,foundProps[i].length-3)*fontSize) ) + 'px';
         }
+        
         loadCSS();
     },
 
@@ -86,19 +87,17 @@
         var xhr = getXMLHttpRequest();
         xhr.open( 'GET', url, true );
         xhr.send();
-        if(window.XMLHttpRequest){ //If browser supports AJAX
+        if (window.XMLHttpRequest){ //If browser supports AJAX
             xhr.onreadystatechange = function() {
                 if ( xhr.readyState === 4 ){
                     callback(xhr, i);
-                } else { //callback function on AJAX error
-                }
+                } else { /*callback function on AJAX error*/ }
             };
          } else { // Then we expect the browser should support AJAX through ActiveX (basically used to target IE6 and IE7)
-                xhr.onreadystatechange = new function() { //IE6 and IE7 need the "new function()" syntax to work properly
+            xhr.onreadystatechange = new function() { //IE6 and IE7 need the "new function()" syntax to work properly
                 if ( xhr.readyState === 4 ){
                     callback(xhr, i);
-                } else { //callback function on AJAX error
-                }
+                } else { /*callback function on AJAX error*/ }
             };
          }
     },
@@ -116,13 +115,13 @@
     },
 
     getXMLHttpRequest = function () { //we're gonna check if our browser will let us use AJAX
-        if(window.XMLHttpRequest){
+        if (window.XMLHttpRequest) {
             return new XMLHttpRequest();
         } else { //if XMLHttpRequest doesn't work
             return new ActiveXObject("Microsoft.XMLHTTP"); //then we'll instead use AJAX through ActiveX for IE6/IE7
         }
     };
-
+    
     if( !cssremunit() ){ //this checks if the rem value is supported
         var rules = '', //initialize the rules variable in this scope so it can be used later
             sheets = [], //initialize the array holding the sheets for use later
@@ -132,7 +131,15 @@
             body = document.getElementsByTagName('body')[0],
             fontSize = '';
         if (body.currentStyle) {
-            fontSize = (body.currentStyle['fontSize'].replace('%', '') / 100) * 16; //IE8 returns the percentage while other browsers return the computed value
+            if ( body.currentStyle['fontSize'].indexOf("px") >= 0 ) {
+                fontSize = body.currentStyle['fontSize'].replace('px', '');
+            } else if ( body.currentStyle['fontSize'].indexOf("em") >= 0 ) {
+                fontSize = body.currentStyle['fontSize'].replace('em', '');
+            } else if ( body.currentStyle['fontSize'].indexOf("pt") >= 0 ) {
+                fontSize = body.currentStyle['fontSize'].replace('pt', '');
+            } else {
+                fontSize = (body.currentStyle['fontSize'].replace('%', '') / 100) * 16; //IE8 returns the percentage while other browsers return the computed value
+            }
         } else if (window.getComputedStyle)
             fontSize = document.defaultView.getComputedStyle(body, null).getPropertyValue('font-size').replace('px', ''); //find font-size in body element
         processSheets();
