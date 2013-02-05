@@ -46,7 +46,7 @@
     },
 
     buildIt = function () { //first build each individual rule from elements in the found array and then add it to the string of rules.
-        var pattern = /[\w\d\s\-\/\\%#:,.'"*()]+\d*\.{0,1}\d+rem[\w\d\s\-\/\\%#:,.'"*()]*;/g; //find properties with rem values in them
+        var pattern = /[\w\d\s\-\/\\%#:,.'"*()]+\d*\.{0,1}\d+rem[\w\d\s\-\/\\%#:,.'"*()]*[;}]/g; //find properties with rem values in them
         for( var i = 0; i < found.length; i++ ){
             rules = rules + found[i].substr(0,found[i].indexOf("{")+1); //save the selector portion of each rule with a rem value
             var current = found[i].match( pattern );
