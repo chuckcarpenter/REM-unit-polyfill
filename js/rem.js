@@ -31,10 +31,11 @@
     },
     
     matchcss = function ( response, i ) { //collect all of the rules from the xhr response texts and match them to a pattern
-        var pattern = /[\w\d\s\-\/\\\[\]:,.'"*()<>+~%#^$_=|]+\{[\w\d\s\-\/\\%#:;,.'"*()]+\d*\.{0,1}\d+rem[\w\d\s\-\/\\%#:;,.'"*()]*\}/g, //find selectors that use rem in one or more of their rules
-            current = response.responseText.match(pattern),
+        var clean = removeComments( response.responseText ),
+            pattern = /[\w\d\s\-\/\\\[\]:,.'"*()<>+~%#^$_=|]+\{[\w\d\s\-\/\\%#:;,.'"*()]+\d*\.{0,1}\d+rem[\w\d\s\-\/\\%#:;,.'"*()]*\}/g, //find selectors that use rem in one or more of their rules
+            current = clean.match(pattern),
             remPattern =/\d*\.{0,1}\d+rem/g,
-            remCurrent = response.responseText.match(remPattern);
+            remCurrent = clean.match(remPattern);
         if( current !== null && current.length !== 0 ){
             found = found.concat( current ); //save all of the blocks of rules with rem in a property
             foundProps = foundProps.concat( remCurrent ); //save all of the properties with rem
@@ -75,7 +76,6 @@
                 rules = rules.replace( foundProps[i],css[i] ); //replace old rules with our processed rules
             }
         }
-        rules = removeComments( rules );
         var remcss = document.createElement( 'style' );
         remcss.setAttribute( 'type', 'text/css' );
         remcss.id = 'remReplace';
