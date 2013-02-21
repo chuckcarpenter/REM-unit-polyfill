@@ -99,7 +99,7 @@
             var xhr = getXMLHttpRequest();
             xhr.open( 'GET', url, true );
             xhr.send();
-            if (window.XMLHttpRequest){ //If browser supports AJAX
+            if ( window.XMLHttpRequest ){ //If browser supports AJAX
                 xhr.onreadystatechange = function() {
                     if ( xhr.readyState === 4 ){
                         callback(xhr, i);
@@ -131,7 +131,15 @@
         if (window.XMLHttpRequest) {
             return new XMLHttpRequest();
         } else { //if XMLHttpRequest doesn't work
-            return new ActiveXObject("Microsoft.XMLHTTP"); //then we'll instead use AJAX through ActiveX for IE6/IE7
+            try {
+                return new ActiveXObject("MSXML2.XMLHTTP"); // then we'll instead use AJAX through ActiveX for IE6/IE7
+            } catch (e1) {
+                try {
+                    return new ActiveXObject("Microsoft.XMLHTTP"); // other microsoft
+                } catch (e2) {
+                    //No XHR at all...
+                }
+            }
         }
     };
     
