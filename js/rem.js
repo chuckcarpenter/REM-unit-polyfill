@@ -84,22 +84,35 @@
     },
 
     xhr = function ( url, callback, i ) { //create new XMLHttpRequest object and run it
-        var xhr = getXMLHttpRequest();
-        xhr.open( 'GET', url, true );
-        xhr.send();
-        if (window.XMLHttpRequest){ //If browser supports AJAX
-            xhr.onreadystatechange = function() {
-                if ( xhr.readyState === 4 ){
-                    callback(xhr, i);
-                } else { /*callback function on AJAX error*/ }
+        if ( window.XDomainRequest ) {
+            var xdr = new XDomainRequest();
+            xdr.open('get', url);
+            xdr.onload = function() {
+                callback(xdr, i);
             };
-         } else { // Then we expect the browser should support AJAX through ActiveX (basically used to target IE6 and IE7)
-            xhr.onreadystatechange = new function() { //IE6 and IE7 need the "new function()" syntax to work properly
-                if ( xhr.readyState === 4 ){
-                    callback(xhr, i);
-                } else { /*callback function on AJAX error*/ }
+            xdr.onerror = function() {
+                alert('IE XDR load fail.');
             };
-         }
+            xdr.send();
+        }
+        else {
+            var xhr = getXMLHttpRequest();
+            xhr.open( 'GET', url, true );
+            xhr.send();
+            if ( window.XMLHttpRequest ){ //If browser supports AJAX
+                xhr.onreadystatechange = function() {
+                    if ( xhr.readyState === 4 ){
+                        callback(xhr, i);
+                    } else { /*callback function on AJAX error*/ }
+                };
+             } else { // Then we expect the browser should support AJAX through ActiveX (basically used to target IE6 and IE7)
+                xhr.onreadystatechange = new function() { //IE6 and IE7 need the "new function()" syntax to work properly
+                    if ( xhr.readyState === 4 ){
+                        callback(xhr, i);
+                    } else { /*callback function on AJAX error*/ }
+                };
+             }
+        }
     },
 
     removeComments = function ( css ) {
