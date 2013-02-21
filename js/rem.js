@@ -118,7 +118,15 @@
         if (window.XMLHttpRequest) {
             return new XMLHttpRequest();
         } else { //if XMLHttpRequest doesn't work
-            return new ActiveXObject("Microsoft.XMLHTTP"); //then we'll instead use AJAX through ActiveX for IE6/IE7
+            try {
+                return new ActiveXObject("MSXML2.XMLHTTP"); // then we'll instead use AJAX through ActiveX for IE6/IE7
+            } catch (e1) {
+                try {
+                    return new ActiveXObject("Microsoft.XMLHTTP"); // other microsoft
+                } catch (e2) {
+                    //No XHR at all...
+                }
+            }
         }
     };
     
