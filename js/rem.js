@@ -62,11 +62,11 @@
     },
 
     parseIt = function () { //replace each set of parentheses with evaluated content
-        
+
         for( var i = 0; i < foundProps.length; i++ ){
             css[i] = Math.round( eval(foundProps[i].substr(0,foundProps[i].length-3)*fontSize) ) + 'px';
         }
-        
+
         loadCSS();
     },
 
@@ -84,18 +84,7 @@
     },
 
     xhr = function ( url, callback, i ) { //create new XMLHttpRequest object and run it
-        if ( window.XDomainRequest ) {
-            var xdr = new XDomainRequest();
-            xdr.open('get', url);
-            xdr.onload = function() {
-                callback(xdr, i);
-            };
-            xdr.onerror = function() {
-                alert('IE XDR load fail.');
-            };
-            xdr.send();
-        }
-        else {
+        try {
             var xhr = getXMLHttpRequest();
             xhr.open( 'GET', url, true );
             xhr.send();
@@ -112,7 +101,19 @@
                     } else { /*callback function on AJAX error*/ }
                 };
              }
-        }
+         } catch (e){
+            if ( window.XDomainRequest ) {
+                var xdr = new XDomainRequest();
+                xdr.open('get', url);
+                xdr.onload = function() {
+                    callback(xdr, i);
+                };
+                xdr.onerror = function() {
+                    console.log('IE XDR load fail.');
+                };
+                xdr.send();
+            }
+         }
     },
 
     removeComments = function ( css ) {
@@ -142,7 +143,7 @@
             }
         }
     };
-    
+
     if( !cssremunit() ){ //this checks if the rem value is supported
         var rules = '', //initialize the rules variable in this scope so it can be used later
             sheets = [], //initialize the array holding the sheets for use later
