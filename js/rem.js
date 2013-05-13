@@ -13,13 +13,14 @@
         var styles = document.getElementsByTagName('link'),
             filteredStyles = [];
         for (i = 0; i < styles.length; i++) {
-            if ( styles[i].rel.toLowerCase() === 'stylesheet' )
+            if ( styles[i].rel.toLowerCase() === 'stylesheet' && !styles[i].hasAttribute('data-norem') ) {
                 filteredStyles.push( styles[i] );
+            }
         }
-        
+
         return filteredStyles;
     },
-    
+
     processSheets = function () {
         var links = [];
         sheets = isStyleSheet(); //search for link tags and confirm it's a stylesheet
@@ -29,7 +30,7 @@
             xhr( links[i], matchcss, i );
         }
     },
-    
+
     matchcss = function ( response, i ) { //collect all of the rules from the xhr response texts and match them to a pattern
         var clean = removeComments( response.responseText ),
             pattern = /[\w\d\s\-\/\\\[\]:,.'"*()<>+~%#^$_=|]+\{[\w\d\s\-\/\\%#:;,.'"*()]+\d*\.{0,1}\d+rem[\w\d\s\-\/\\%#:;,.'"*()]*\}/g, //find selectors that use rem in one or more of their rules
