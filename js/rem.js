@@ -13,7 +13,8 @@
         var styles = document.getElementsByTagName('link'),
             filteredStyles = [];
         for (i = 0; i < styles.length; i++) {
-            if ( styles[i].rel.toLowerCase() === 'stylesheet' && !styles[i].hasAttribute('data-norem') ) {
+            // here we need to use getAttribute instead of hasAttribute to support IE < 8
+            if ( styles[i].rel.toLowerCase() === 'stylesheet' && styles[i].getAttribute('data-norem') === null ) {
                 filteredStyles.push( styles[i] );
             }
         }
@@ -89,13 +90,16 @@
             var xhr = getXMLHttpRequest();
             xhr.open( 'GET', url, true );
             xhr.send();
-            if ( window.XMLHttpRequest ){ //If browser supports AJAX
+            try {
+                // This targets modern browsers and modern versions of IE,
+                // which don't need the "new" keyword.
                 xhr.onreadystatechange = function() {
                     if ( xhr.readyState === 4 ){
                         callback(xhr, i);
                     } else { /*callback function on AJAX error*/ }
                 };
-             } else { // Then we expect the browser should support AJAX through ActiveX (basically used to target IE6 and IE7)
+             } catch (e) {
+                // This block targets old versions of IE, which require "new".
                 xhr.onreadystatechange = new function() { //IE6 and IE7 need the "new function()" syntax to work properly
                     if ( xhr.readyState === 4 ){
                         callback(xhr, i);
