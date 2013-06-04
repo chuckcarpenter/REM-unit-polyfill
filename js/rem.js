@@ -13,7 +13,8 @@
         var styles = document.getElementsByTagName('link'),
             filteredStyles = [];
         for (i = 0; i < styles.length; i++) {
-            if ( styles[i].rel.toLowerCase() === 'stylesheet' && !styles[i].hasAttribute('data-norem') ) {
+            // here we need to use getAttribute instead of hasAttribute to support IE < 8
+            if ( styles[i].rel.toLowerCase() === 'stylesheet' && styles[i].getAttribute('data-norem') !== null ) {
                 filteredStyles.push( styles[i] );
             }
         }
