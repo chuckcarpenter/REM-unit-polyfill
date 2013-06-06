@@ -86,21 +86,29 @@
     },
 
     xhr = function ( url, callback, i ) { //create new XMLHttpRequest object and run it
+        var ie = (function(){ //function checking IE version
+            var undef,
+                v = 3,
+                div = document.createElement('div'),
+                all = div.getElementsByTagName('i');
+            while (
+                div.innerHTML = '<!--[if gt IE ' + (++v) + ']><i></i><![endif]-->',
+                all[0]
+            );
+            return v > 4 ? v : undef;
+        }()); 
         try {
             var xhr = getXMLHttpRequest();
             xhr.open( 'GET', url, true );
             xhr.send();
-            try {
-                // This targets modern browsers and modern versions of IE,
-                // which don't need the "new" keyword.
-                xhr.onreadystatechange = function() {
+            if ( ie < 8 ){ //If IE is IE6 or IE7
+                xhr.onreadystatechange = new function() { //IE6 and IE7 need the "new function()" syntax to work properly
                     if ( xhr.readyState === 4 ){
                         callback(xhr, i);
                     } else { /*callback function on AJAX error*/ }
                 };
-             } catch (e) {
-                // This block targets old versions of IE, which require "new".
-                xhr.onreadystatechange = new function() { //IE6 and IE7 need the "new function()" syntax to work properly
+             } else { // Then we expect the browser should support function() normally
+                xhr.onreadystatechange =  function() { 
                     if ( xhr.readyState === 4 ){
                         callback(xhr, i);
                     } else { /*callback function on AJAX error*/ }
