@@ -20,8 +20,18 @@
 
         return filteredStyles;
     },
-
-    processSheets = function () {
+    
+    removeQueries = function(){
+        var links = [];
+        sheets = isStyleSheet(); //search for link tags and confirm it's a stylesheet
+        sheets.og = sheets.length; //store the original length of sheets as a property
+        for( var i = 0; i < sheets.length; i++ ){
+            links[i] = sheets[i].href;
+            xhr( links[i], matchcss, i );
+        }
+    },
+    
+   processSheets = function () {
         var links = [];
         sheets = isStyleSheet(); //search for link tags and confirm it's a stylesheet
         sheets.og = sheets.length; //store the original length of sheets as a property
@@ -32,11 +42,12 @@
     },
 
     matchcss = function ( response, i ) { //collect all of the rules from the xhr response texts and match them to a pattern
-        var clean = removeComments( response.responseText ),
+        var clean = removeComments( removeMediaQueries(response.responseText) ),
             pattern = /[\w\d\s\-\/\\\[\]:,.'"*()<>+~%#^$_=|]+\{[\w\d\s\-\/\\%#:;,.'"*()]+\d*\.{0,1}\d+rem[\w\d\s\-\/\\%#:;,.'"*()]*\}/g, //find selectors that use rem in one or more of their rules
             current = clean.match(pattern),
             remPattern =/\d*\.{0,1}\d+rem/g,
             remCurrent = clean.match(remPattern);
+
         if( current !== null && current.length !== 0 ){
             found = found.concat( current ); //save all of the blocks of rules with rem in a property
             foundProps = foundProps.concat( remCurrent ); //save all of the properties with rem
@@ -128,6 +139,17 @@
             return css;
         }
     },
+    
+    removeMediaQueries = function(css) { 
+    	while (css.match(/@media/) !== null) { // If CSS syntax is correct there should always be a "@media" str matching a "}\s*}" string
+			var start = css.match(/@media/).index,
+		    	endArr = css.match(/\}\s*\}/),
+				end = endArr.index + endArr[0].length
+
+			css = css.substring(0, start) + css.substring(end)
+		}
+		return css;	
+    },
 
     getXMLHttpRequest = function () { //we're gonna check if our browser will let us use AJAX
         if (window.XMLHttpRequest) {
@@ -163,8 +185,9 @@
             } else {
                 fontSize = (body.currentStyle['fontSize'].replace('%', '') / 100) * 16; //IE8 returns the percentage while other browsers return the computed value
             }
-        } else if (window.getComputedStyle)
+        } else if (window.getComputedStyle) {
             fontSize = document.defaultView.getComputedStyle(body, null).getPropertyValue('font-size').replace('px', ''); //find font-size in body element
+        }
         processSheets();
     } else {
         // do nothing, you are awesome and have REM support
