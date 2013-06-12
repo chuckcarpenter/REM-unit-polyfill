@@ -131,7 +131,7 @@
     },
 
 	// Test for Media Query support
-	mediaQuery = function() {
+    mediaQuery = function() {
 		if (window.matchMedia || window.msMatchMedia) { return true; }
 		return false;
 	},
