@@ -21,16 +21,6 @@
         return filteredStyles;
     },
     
-    removeQueries = function(){
-        var links = [];
-        sheets = isStyleSheet(); //search for link tags and confirm it's a stylesheet
-        sheets.og = sheets.length; //store the original length of sheets as a property
-        for( var i = 0; i < sheets.length; i++ ){
-            links[i] = sheets[i].href;
-            xhr( links[i], matchcss, i );
-        }
-    },
-    
    processSheets = function () {
         var links = [];
         sheets = isStyleSheet(); //search for link tags and confirm it's a stylesheet
@@ -139,14 +129,22 @@
             return css;
         }
     },
-    
-    removeMediaQueries = function(css) { 
-    	while (css.match(/@media/) !== null) { // If CSS syntax is correct there should always be a "@media" str matching a "}\s*}" string
-			var start = css.match(/@media/).index,
-		    	endArr = css.match(/\}\s*\}/),
-				end = endArr.index + endArr[0].length
 
-			css = css.substring(0, start) + css.substring(end)
+	// Test for Media Query support
+	mediaQuery = function() {
+		if (window.matchMedia || window.msMatchMedia) { return true; }
+		return false;
+	},
+    
+    // Remove queries.
+    removeMediaQueries = function(css) {
+		if (!mediaQuery()) {
+			while (css.match(/@media/) !== null) { // If CSS syntax is correct there should always be a "@media" str matching a "}\s*}" string
+				var start = css.match(/@media/).index,
+					end = css.match(/\}\s*\}/)
+	
+				css = css.substring(0, start) + css.substring(end.index + end[0].length)
+			}		
 		}
 		return css;	
     },
