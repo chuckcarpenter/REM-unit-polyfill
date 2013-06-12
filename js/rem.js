@@ -132,21 +132,21 @@
 
 	// Test for Media Query support
     mediaQuery = function() {
-		if (window.matchMedia || window.msMatchMedia) { return true; }
-		return false;
-	},
+        if (window.matchMedia || window.msMatchMedia) { return true; }
+        return false;
+    },
     
     // Remove queries.
     removeMediaQueries = function(css) {
-		if (!mediaQuery()) {
-			while (css.match(/@media/) !== null) { // If CSS syntax is correct there should always be a "@media" str matching a "}\s*}" string
-				var start = css.match(/@media/).index,
-					end = css.match(/\}\s*\}/);
-	
-				css = css.substring(0, start) + css.substring(end.index + end[0].length);
-			}		
-		}
-		return css;	
+        if (!mediaQuery()) {
+            while (css.match(/@media/) !== null) { // If CSS syntax is correct there should always be a "@media" str matching a "}\s*}" string
+                var start = css.match(/@media/).index,
+                    end = css.match(/\}\s*\}/);
+
+                css = css.substring(0, start) + css.substring(end.index + end[0].length);
+            }		
+        }
+        return css;	
     },
 
     getXMLHttpRequest = function () { //we're gonna check if our browser will let us use AJAX
