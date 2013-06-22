@@ -21,8 +21,8 @@
 
         return filteredStyles;
     },
-
-    processSheets = function () {
+    
+   processSheets = function () {
         var links = [];
         sheets = isStyleSheet(); // search for link tags and confirm it's a stylesheet
         sheets.og = sheets.length; // store the original length of sheets as a property
@@ -31,13 +31,14 @@
             xhr( links[i], matchCSS, i );
         }
     },
-
+    
     matchCSS = function ( response, i ) { // collect all of the rules from the xhr response texts and match them to a pattern
-        var clean = removeComments( response.responseText ),
+        var clean = removeComments( removeMediaQueries(response.responseText) ),
             pattern = /[\w\d\s\-\/\\\[\]:,.'"*()<>+~%#^$_=|@]+\{[\w\d\s\-\/\\%#:;,.'"*()]+\d*\.?\d+rem[\w\d\s\-\/\\%#:;,.'"*()]*\}/g, //find selectors that use rem in one or more of their rules
             current = clean.match(pattern),
             remPattern =/\d*\.?\d+rem/g,
             remCurrent = clean.match(remPattern);
+
         if( current !== null && current.length !== 0 ){
             found = found.concat( current ); // save all of the blocks of rules with rem in a property
             foundProps = foundProps.concat( remCurrent ); // save all of the properties with rem
@@ -94,22 +95,34 @@
             var xhr = getXMLHttpRequest();
             xhr.open( 'GET', url, true );
             xhr.send();
-            try {
+            var ie = (function () { //function checking IE version
+            var undef,
+                v = 3,
+                div = document.createElement('div'),
+                all = div.getElementsByTagName('i');
+                while (
+                    div.innerHTML = '<!--[if gt IE ' + (++v) + ']><i></i><![endif]-->',
+                    all[0]
+                );
+            return v > 4 ? v : undef;
+            }());
+            
+            if ( ie >= 7 ){ //If IE is greater than 6
                 // This targets modern browsers and modern versions of IE,
                 // which don't need the "new" keyword.
-                xhr.onreadystatechange = function() {
+                xhr.onreadystatechange = function () {
                     if ( xhr.readyState === 4 ){
                         callback(xhr, i);
                     } // else { callback function on AJAX error }
                 };
-             } catch (e) {
+            } else {
                 // This block targets old versions of IE, which require "new".
                 xhr.onreadystatechange = new function() { //IE6 and IE7 need the "new function()" syntax to work properly
                     if ( xhr.readyState === 4 ){
                         callback(xhr, i);
                     } // else { callback function on AJAX error }
                 };
-             }
+            }
          } catch (e){
             if ( window.XDomainRequest ) {
                 var xdr = new XDomainRequest();
@@ -135,6 +148,25 @@
         else {
             return css;
         }
+    },
+
+	// Test for Media Query support
+    mediaQuery = function() {
+        if (window.matchMedia || window.msMatchMedia) { return true; }
+        return false;
+    },
+    
+    // Remove queries.
+    removeMediaQueries = function(css) {
+        if (!mediaQuery()) {
+            while (css.match(/@media/) !== null) { // If CSS syntax is correct there should always be a "@media" str matching a "}\s*}" string
+                var start = css.match(/@media/).index,
+                    end = css.match(/\}\s*\}/);
+
+                css = css.substring(0, start) + css.substring(end.index + end[0].length);
+            }		
+        }
+        return css;	
     },
 
     getXMLHttpRequest = function () { // we're gonna check if our browser will let us use AJAX

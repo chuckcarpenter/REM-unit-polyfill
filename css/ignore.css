@@ -1,0 +1,8 @@
+/* This rule should be ignored by the REM processor. 
+   If your font is tiny, something is wrong. Make
+   sure you've the data-norem attr on your stylesheet link.
+*/
+
+p {
+    font-size: .2rem;
+}
