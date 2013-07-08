@@ -3,10 +3,15 @@
 <head>
 	<title>remReplace</title>
 	<link rel="stylesheet" type="text/css" href="css/general.css" />
+    <!-- ignore.css shows in normal browsers, but ones where we expect the REM.js to 
+         run then the REM rules should not get parsed.
+     -->
+    <link rel="stylesheet" type="text/css" href="css/ignore.css" data-norem />
 
 </head>
 <body>
 	<div class="test">Hello World!</div>
-	<script src="js/rem.js" type="text/javascript"></script>
+    <p>This thing works.</p>
+	<script src="js/rem.min.js" type="text/javascript"></script>
 </body>
 </html>

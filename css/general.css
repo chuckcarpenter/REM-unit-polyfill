@@ -1,14 +1,26 @@
 /* TEST comments for the CSS */
 
 html {
-    font-size: 62.5%;
+    font-size: 100%;
         -webkit-text-size-adjust: 100%;
             -ms-text-size-adjust: 100%;
     line-height: 1.6;
 }
 .test {
-	background-color:red;
+	background-color:blue;
+    color: white;
 	width: 10em;
-	height: 3.2rem;
+	height: 5rem;
 }
-p {font-size: 1.4rem;}
+p {font-size: 5rem;}
+
+/* These styles will only show in REM ready browsers. 
+   If you're expecting these to be ignored, but see a green box
+   then something went wrong.
+*/
+@media screen and (min-width: 480px) {
+    p {
+        font-size: 10rem;
+    }
+    .test {background-color: green;}
+}
