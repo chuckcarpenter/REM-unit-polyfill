@@ -157,14 +157,20 @@
     },
     
     // Remove queries.
-    removeMediaQueries = function(css) {
+    removeMediaQueries = function(css) {		
         if (!mediaQuery()) {
+	    var mediaQueryHack = '';
             while (css.match(/@media/) !== null) { // If CSS syntax is correct there should always be a "@media" str matching a "}\s*}" string
                 var start = css.match(/@media/).index,
-                    end = css.match(/\}\s*\}/);
-
+                    end = css.match(/\}\s*\}/);	
+		// The following part make sure that the media queries hack for IE6/IE7/IE8 will not be ignored, unlike the standard media queries
+		var tryHack = css.substring(start, end.index);
+		if (tryHack.match(/screen\\/) !== null) {
+			mediaQueryHack += tryHack;		
+		}
                 css = css.substring(0, start) + css.substring(end.index + end[0].length);
-            }		
+            }
+	    css += mediaQueryHack;
         }
         return css;	
     },
