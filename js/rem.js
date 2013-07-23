@@ -89,7 +89,7 @@
         }
     },
 
-	ie = function () { //function checking IE version
+    ie = function () { //function checking IE version
             var undef,
                 v = 3,
                 div = document.createElement('div'),
@@ -160,12 +160,17 @@
     removeMediaQueries = function(css) {		
         if (!mediaQuery()) {
 			var mediaQueryHack = '';
+			var i = 0;
             while (css.match(/@media/) !== null) { // If CSS syntax is correct there should always be a "@media" str matching a "}\s*}" string
-                var start = css.match(/@media/).index,
-                    end = css.match(/\}\s*\}/);	
+                var start = css.match(/@media/).index;
+                var tempcss = css.substring(start);
+                
+                var tempend = tempcss.match(/\}\s*\}/);
+                var end = tempend.index + start + tempend[0].length;	
+
 				// The following part make sure that the media queries hack for IE6/IE7/IE8 will not be ignored, unlike the standard media queries
 				// The concerned media queries can be found at http://browserhacks.com/
-				var tryHack = css.substring(start, end.index + end[0].length);
+				var tryHack = css.substring(start, end);
 				if (tryHack.match(/\\0screen\\,screen\\9/) !== null && ie() <= 8 ) { // "@media \0screen\,screen\9" for IE6,IE7,IE8
 					mediaQueryHack += tryHack;	
 				} else if (tryHack.match(/\\0screen/) !== null && ie() == 8  ) { // "@media \0screen" for IE8
@@ -175,9 +180,9 @@
 				} else if (tryHack.match(/screen\\0/) !== null && ie() >= 8  ) { // "@media screen\0" for IE8,IE9,IE10
 					mediaQueryHack += tryHack;
 				}
-                    css = css.substring(0, start) + css.substring(end.index + end[0].length);
+                css = css.substring(0, start) + css.substring(end);
             }
-		css += mediaQueryHack;
+			css += mediaQueryHack;
         }
         return css;	
     },
