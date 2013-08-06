@@ -12,7 +12,7 @@
     isStyleSheet = function () {
         var styles = document.getElementsByTagName('link'),
             filteredStyles = [];
-            
+
         for ( var i = 0; i < styles.length; i++) {
             if ( styles[i].rel.toLowerCase() === 'stylesheet' && styles[i].getAttribute('data-norem') === null ) {
                 filteredStyles.push( styles[i] );
@@ -21,7 +21,7 @@
 
         return filteredStyles;
     },
-    
+
    processSheets = function () {
         var links = [];
         sheets = isStyleSheet(); // search for link tags and confirm it's a stylesheet
@@ -31,7 +31,7 @@
             xhr( links[i], matchCSS, i );
         }
     },
-    
+
     matchCSS = function ( response, i ) { // collect all of the rules from the xhr response texts and match them to a pattern
         var clean = removeComments( removeMediaQueries(response.responseText) ),
             pattern = /[\w\d\s\-\/\\\[\]:,.'"*()<>+~%#^$_=|@]+\{[\w\d\s\-\/\\%#:;,.'"*()]+\d*\.?\d+rem[\w\d\s\-\/\\%#:;,.'"*()]*\}/g, //find selectors that use rem in one or more of their rules
@@ -106,7 +106,7 @@
                 );
             return v > 4 ? v : undef;
             }());
-            
+
             if ( ie >= 7 ){ //If IE is greater than 6
                 // This targets modern browsers and modern versions of IE,
                 // which don't need the "new" keyword.
@@ -155,18 +155,15 @@
         if (window.matchMedia || window.msMatchMedia) { return true; }
         return false;
     },
-    
+
     // Remove queries.
     removeMediaQueries = function(css) {
         if (!mediaQuery()) {
             while (css.match(/@media/) !== null) { // If CSS syntax is correct there should always be a "@media" str matching a "}\s*}" string
-                var start = css.match(/@media/).index,
-                    end = css.match(/\}\s*\}/);
-
-                css = css.substring(0, start) + css.substring(end.index + end[0].length);
-            }		
+                css = css.replace(/@media.*?\}/g, '');
+            }
         }
-        return css;	
+        return css;
     },
 
     getXMLHttpRequest = function () { // we're gonna check if our browser will let us use AJAX

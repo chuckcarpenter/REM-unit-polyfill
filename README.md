@@ -1,11 +1,13 @@
+Attempt to make the polyfill more memory efficient.
+
 REM unit polyfill
 =================
 
 No fluff here. The polyfill will test any browser for REM support and patch it up if needed, although we all know IE8 and below is where the issue lies. Once lack of support is determined, it reads all the link tags for stylesheets and finds selectors that have rules using the REM unit. It then recalculates those rules to PX and writes them in the head to override in the cascade. Magic.
 
-Special shout out to [Lucas Serven](https://github.com/lsvx) for the first version and all the amazing RegEx that's gone into this. 
+Special shout out to [Lucas Serven](https://github.com/lsvx) for the first version and all the amazing RegEx that's gone into this.
 
-It has been tested on a large production publishing site and works great with minor performance differences. 
+It has been tested on a large production publishing site and works great with minor performance differences.
 
 We're always open to suggestions and/or improvements, so please fork!
 
