@@ -1,5 +1,3 @@
-Attempt to make the polyfill more memory efficient.
-
 REM unit polyfill
 =================
 
