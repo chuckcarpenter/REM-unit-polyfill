@@ -38,7 +38,6 @@
             current = clean.match(pattern),
             remPattern =/\d*\.?\d+rem/g,
             remCurrent = clean.match(remPattern);
-
         if( current !== null && current.length !== 0 ){
             found = found.concat( current ); // save all of the blocks of rules with rem in a property
             foundProps = foundProps.concat( remCurrent ); // save all of the properties with rem
@@ -91,12 +90,7 @@
         }
     },
 
-    xhr = function ( url, callback, i ) { // create new XMLHttpRequest object and run it
-        try {
-            var xhr = getXMLHttpRequest();
-            xhr.open( 'GET', url, true );
-            xhr.send();
-            var ie = (function () { //function checking IE version
+    ie = function () { //function checking IE version
             var undef,
                 v = 3,
                 div = document.createElement('div'),
@@ -106,9 +100,15 @@
                     all[0]
                 );
             return v > 4 ? v : undef;
-            }());
+    },
+
+    xhr = function ( url, callback, i ) { // create new XMLHttpRequest object and run it
+        try {
+            var xhr = getXMLHttpRequest();
+            xhr.open( 'GET', url, true );
+            xhr.send();
             
-            if ( ie >= 7 ){ //If IE is greater than 6
+            if ( ie() >= 8 ){ //If IE is greater than 7
                 // This targets modern browsers and modern versions of IE,
                 // which don't need the "new" keyword.
                 xhr.onreadystatechange = function () {
@@ -158,14 +158,32 @@
     },
     
     // Remove queries.
-    removeMediaQueries = function(css) {
+    removeMediaQueries = function(css) {		
         if (!mediaQuery()) {
+			var mediaQueryHack = '';
+			var i = 0;
             while (css.match(/@media/) !== null) { // If CSS syntax is correct there should always be a "@media" str matching a "}\s*}" string
-                var start = css.match(/@media/).index,
-                    end = css.match(/\}\s*\}/);
+                var start = css.match(/@media/).index;
+                var tempcss = css.substring(start);
+                
+                var tempend = tempcss.match(/\}\s*\}/);
+                var end = tempend.index + start + tempend[0].length;	
 
-                css = css.substring(0, start) + css.substring(end.index + end[0].length);
-            }		
+				// The following part make sure that the media queries hack for IE6/IE7/IE8 will not be ignored, unlike the standard media queries
+				// The concerned media queries can be found at http://browserhacks.com/
+				var tryHack = css.substring(start, end);
+				if (tryHack.match(/\\0screen\\,screen\\9/) !== null && ie() <= 8 ) { // "@media \0screen\,screen\9" for IE6,IE7,IE8
+					mediaQueryHack += tryHack;	
+				} else if (tryHack.match(/\\0screen/) !== null && ie() == 8  ) { // "@media \0screen" for IE8
+					mediaQueryHack += tryHack;
+				} else if (tryHack.match(/screen\\9/) !== null && ie() < 8  ) { // "@media screen\9" for IE6,IE7
+					mediaQueryHack += tryHack;
+				} else if (tryHack.match(/screen\\0/) !== null && ie() >= 8  ) { // "@media screen\0" for IE8,IE9,IE10
+					mediaQueryHack += tryHack;
+				}
+                css = css.substring(0, start) + css.substring(end);
+            }
+			css += mediaQueryHack;
         }
         return css;	
     },
