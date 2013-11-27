@@ -160,7 +160,7 @@
     // Remove queries.
     removeMediaQueries = function(css) {
         if (!mediaQuery()) {
-            css = css.replace(/@media.*?\}/g, ''); // Match and replace every occurance of a media query with nothing
+            css.replace(/@media[\s\S]*\}\s*\}/, "");
         }
         return css;	
     },
