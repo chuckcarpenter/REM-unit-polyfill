@@ -162,7 +162,7 @@
         if (!mediaQuery()) {
             // If the browser doesn't support media queries, we find all @media declarations in the CSS and remove them.
             // Note: Since @rules can't be nested in the CSS spec, we're safe to just check for the closest following "}}" to the "@media".
-            css.replace(/@media[\s\S]*\}\s*\}/, "");
+            css.replace(/@media[\s\S]*?\}\s*\}/, "");
         }
         return css;	
     },
