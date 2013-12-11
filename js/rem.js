@@ -39,8 +39,6 @@
             remPattern =/\d*\.?\d+rem/g,
             remCurrent = clean.match(remPattern);
 
-        //document.getElementById("debug").innerHTML = clean;
-
         if( current !== null && current.length !== 0 ){
             found = found.concat( current ); // save all of the blocks of rules with rem in a property
             foundProps = foundProps.concat( remCurrent ); // save all of the properties with rem
