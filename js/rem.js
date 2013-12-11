@@ -160,13 +160,11 @@
     // Remove queries.
     removeMediaQueries = function(css) {
         if (!mediaQuery()) {
-            while (css.match(/@media/) !== null) { // If CSS syntax is correct there should always be a "@media" str matching a "}\s*}" string
-                var start = css.match(/@media/).index,
-                    end = css.match(/\}\s*\}/);
-
-                css = css.substring(0, start) + css.substring(end.index + end[0].length);
-            }		
+            // If the browser doesn't support media queries, we find all @media declarations in the CSS and remove them.
+            // Note: Since @rules can't be nested in the CSS spec, we're safe to just check for the closest following "}}" to the "@media".
+            css = css.replace(/@media[\s\S]*?\}\s*\}/, "");
         }
+
         return css;	
     },
 
