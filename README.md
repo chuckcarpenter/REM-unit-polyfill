@@ -1,4 +1,4 @@
-REM unit polyfill
+[REM unit polyfill](http://chuckcarpenter.github.io/REM-unit-polyfill/)
 =================
 
 No fluff here. The polyfill will test any browser for REM support and patch it up if needed, although we all know IE8 and below is where the issue lies. Once lack of support is determined, it reads all the link tags for stylesheets and finds selectors that have rules using the REM unit. It then recalculates those rules to PX and writes them in the head to override in the cascade. Magic.
