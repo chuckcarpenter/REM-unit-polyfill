@@ -39,6 +39,8 @@
             remPattern =/\d*\.?\d+rem/g,
             remCurrent = clean.match(remPattern);
 
+        //document.getElementById("debug").innerHTML = clean;
+
         if( current !== null && current.length !== 0 ){
             found = found.concat( current ); // save all of the blocks of rules with rem in a property
             foundProps = foundProps.concat( remCurrent ); // save all of the properties with rem
@@ -162,8 +164,9 @@
         if (!mediaQuery()) {
             // If the browser doesn't support media queries, we find all @media declarations in the CSS and remove them.
             // Note: Since @rules can't be nested in the CSS spec, we're safe to just check for the closest following "}}" to the "@media".
-            css.replace(/@media[\s\S]*?\}\s*\}/, "");
+            css = css.replace(/@media[\s\S]*?\}\s*\}/, "");
         }
+
         return css;	
     },
 
