@@ -40,17 +40,11 @@ module.exports = (grunt) ->
                 eqnull: true
                 expr: true
                 latedef: true
-                onevar: true
                 noarg: true
-                node: true
                 trailing: true
                 unused: true
-                # evil: true
-                # regexdash: true
-                # browser: true
-                # wsh: true
-                # trailing: true
-                # sub: true
+                regexdash: true
+                browser: true
                 force: true
 
             all: ['src/<%= pkg.name %>.js', '!<%= pkg.name %>.min.js']
