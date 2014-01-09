@@ -10,7 +10,7 @@ html {
 	background-color:blue;
     color: white;
 	width: 10em;
-	height: 5rem;
+	height: 5rem !important;
 }
 p {font-size: 5rem;}
 

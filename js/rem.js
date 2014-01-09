@@ -67,7 +67,7 @@
     parseCSS = function () { // replace each set of parentheses with evaluated content
 	var remSize;
         for( var i = 0; i < foundProps.length; i++ ){
-            remSize = parseFloat(foundProps[i].substr(0,foundProps[i].length-3));
+            remSize = parseFloat(foundProps[i].replace(/\D/g,''))
             css[i] = Math.round( remSize * fontSize ) + 'px';
         }
 
