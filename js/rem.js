@@ -34,7 +34,7 @@
     
     matchCSS = function ( response, i ) { // collect all of the rules from the xhr response texts and match them to a pattern
         var clean = removeComments( removeMediaQueries(response.responseText) ),
-            pattern = /[\w\d\s\-\/\\\[\]:,.'"*()<>+~%#^$_=|@]+\{[\w\d\s\-\/\\%#:;,.'"*()]+\d*\.?\d+rem[\w\d\s\-\/\\%#:!*;,.'"*()]*\}/g, //find selectors that use rem in one or more of their rules
+            pattern = /[\w\d\s\-\/\\\[\]:,.'"*()<>+~%#^$_=|@]+\{[\w\d\s\-\/\\%#:!;,.'"*()]+\d*\.?\d+rem[\w\d\s\-\/\\%#:!*;,.'"*()]*\}/g, //find selectors that use rem in one or more of their rules
             current = clean.match(pattern),
             remPattern =/\d*\.?\d+rem/g,
             remCurrent = clean.match(remPattern);
