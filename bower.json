@@ -7,7 +7,7 @@
     "Lucas Serven <lserven@gmail.com>"
   ],
   "description": "A polyfill to parse CSS links and rewrite pixel equivalents into head for non supporting browsers",
-  "main": "rem.js",
+  "main": "js/rem.js",
   "keywords": [
     "polyfill",
     "rem",
