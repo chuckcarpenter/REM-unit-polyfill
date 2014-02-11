@@ -26,14 +26,28 @@
         var links = [];
         sheets = isStyleSheet(); // search for link tags and confirm it's a stylesheet
         sheets.og = sheets.length; // store the original length of sheets as a property
-        sheets.loaded = 0; // keep track of how have been loaded from the xhr request
+        sheets.loaded = 0; // keep track of how many have been loaded so far
         for( var i = 0; i < sheets.length; i++ ){
             links[i] = sheets[i].href;
-            xhr( links[i], matchCSS, i );
+            xhr( links[i], storeCSS, i );
         }
     },
-    
-    matchCSS = function ( response, i ) { // collect all of the rules from the xhr response texts and match them to a pattern
+
+    storeCSS = function ( response, i ) {
+
+        preCSS[i] = response;
+
+        if( ++sheets.loaded === sheets.og ){
+            for ( var j = 0; j < preCSS.length; j++ ){
+                matchCSS( preCSS[j] );
+            }
+
+            buildCSS();
+        }
+
+    },
+
+    matchCSS = function ( response ) { // collect all of the rules from the xhr response texts and match them to a pattern
         var clean = removeComments( removeMediaQueries(response.responseText) ),
             pattern = /[\w\d\s\-\/\\\[\]:,.'"*()<>+~%#^$_=|@]+\{[\w\d\s\-\/\\%#:;,.'"*()]+\d*\.?\d+rem[\w\d\s\-\/\\%#:;,.'"*()]*\}/g, //find selectors that use rem in one or more of their rules
             current = clean.match(pattern),
@@ -43,9 +57,6 @@
         if( current !== null && current.length !== 0 ){
             found = found.concat( current ); // save all of the blocks of rules with rem in a property
             foundProps = foundProps.concat( remCurrent ); // save all of the properties with rem
-        }
-        if( ++sheets.loaded === sheets.og ){
-            buildCSS();
         }
     },
 
@@ -190,6 +201,7 @@
             sheets = [], // initialize the array holding the sheets for use later
             found = [], // initialize the array holding the found rules for use later
             foundProps = [], // initialize the array holding the found properties for use later
+            preCSS = [], // initialize array that holds css before being parsed
             css = [], // initialize the array holding the parsed rules for use later
             body = document.getElementsByTagName('body')[0],
             fontSize = '';
