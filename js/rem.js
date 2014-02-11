@@ -26,6 +26,7 @@
         var links = [];
         sheets = isStyleSheet(); // search for link tags and confirm it's a stylesheet
         sheets.og = sheets.length; // store the original length of sheets as a property
+        sheets.loaded = 0; // keep track of how have been loaded from the xhr request
         for( var i = 0; i < sheets.length; i++ ){
             links[i] = sheets[i].href;
             xhr( links[i], matchCSS, i );
@@ -43,7 +44,7 @@
             found = found.concat( current ); // save all of the blocks of rules with rem in a property
             foundProps = foundProps.concat( remCurrent ); // save all of the properties with rem
         }
-        if( i === sheets.og-1 ){
+        if( ++sheets.loaded === sheets.og ){
             buildCSS();
         }
     },
