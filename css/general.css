@@ -7,10 +7,10 @@ html {
     line-height: 1.6;
 }
 .test {
-	background-color:blue;
+	background-color:blue !important;
     color: white;
 	width: 10em;
-	height: 5rem;
+	height: 5rem !important;
 }
 p {font-size: 5rem;}
 
