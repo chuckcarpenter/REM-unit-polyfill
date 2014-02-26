@@ -131,8 +131,8 @@
             } else {
                 // This block targets old versions of IE, which require "new".
                 xhr.onreadystatechange = new function() { //IE6 and IE7 need the "new function()" syntax to work properly
-                    if ( xhr.readyState === 4 ){
-                        callback(xhr, i);
+                    if ( xhr.readyState === 4 ) {
+                        callback( xhr, i );
                     } // else { callback function on AJAX error }
                 };
             }
@@ -177,7 +177,7 @@
             css = css.replace(/@media[\s\S]*?\}\s*\}/, "");
         }
 
-        return css;	
+        return css;
     },
 
     getXMLHttpRequest = function () { // we're gonna check if our browser will let us use AJAX
