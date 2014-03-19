@@ -5,46 +5,64 @@
         var div = document.createElement( 'div' );
             div.style.cssText = 'font-size: 1rem;';
 
+        return false;
         return (/rem/).test(div.style.fontSize);
     },
 
-    // filter returned link nodes for stylesheets
+    // filter returned links for stylesheets
     isStyleSheet = function () {
         var styles = document.getElementsByTagName('link'),
             filteredStyles = [];
             
         for ( var i = 0; i < styles.length; i++) {
             if ( styles[i].rel.toLowerCase() === 'stylesheet' && styles[i].getAttribute('data-norem') === null ) {
-                filteredStyles.push( styles[i] );
+
+                filteredStyles.push( styles[i].href );
             }
         }
 
         return filteredStyles;
     },
     
-   processSheets = function () {
-        var links = [];
-        sheets = isStyleSheet(); // search for link tags and confirm it's a stylesheet
-        sheets.og = sheets.length; // store the original length of sheets as a property
-        for( var i = 0; i < sheets.length; i++ ){
-            links[i] = sheets[i].href;
-            xhr( links[i], matchCSS, i );
+   processLinks = function () {
+        if( links.length === 0 ){
+            links = isStyleSheet(); // search for link tags and confirm it's a stylesheet
+        }
+
+        for( var i = 0; i < links.length; i++ ){
+            var res = links.shift();
+            xhr( res, matchCSS, res, i++ );
         }
     },
     
-    matchCSS = function ( response, i ) { // collect all of the rules from the xhr response texts and match them to a pattern
+    matchCSS = function ( response, link, i ) { // collect all of the rules from the xhr response texts and match them to a pattern
         var clean = removeComments( removeMediaQueries(response.responseText) ),
             pattern = /[\w\d\s\-\/\\\[\]:,.'"*()<>+~%#^$_=|@]+\{[\w\d\s\-\/\\%#:;,.'"*()]+\d*\.?\d+rem[\w\d\s\-\/\\%#:;,.'"*()]*\}/g, //find selectors that use rem in one or more of their rules
             current = clean.match(pattern),
             remPattern =/\d*\.?\d+rem/g,
             remCurrent = clean.match(remPattern);
 
+        var import_pattern = /@import (?:url\(['"](.*)['"]\)|url\((.*)\)|['"](.*)['"]).*;/g;
+        var responseText = response.responseText;
+        var imported_lines = responseText.match(import_pattern);
+
+
+
+        if (imported_lines !== null) {
+            for ( var j = 0; j < imported_lines.length; j++) {
+                links.push(import_location + import_lines[j]);
+            }
+        }
+
         if( current !== null && current.length !== 0 ){
             found = found.concat( current ); // save all of the blocks of rules with rem in a property
             foundProps = foundProps.concat( remCurrent ); // save all of the properties with rem
         }
-        if( i === sheets.og-1 ){
+
+        if( links.length === 0 ){
             buildCSS();
+        } else {
+            processLinks();
         }
     },
 
@@ -65,7 +83,7 @@
     },
 
     parseCSS = function () { // replace each set of parentheses with evaluated content
-	var remSize;
+    var remSize;
         for( var i = 0; i < foundProps.length; i++ ){
             remSize = parseFloat(foundProps[i].substr(0,foundProps[i].length-3));
             css[i] = Math.round( remSize * fontSize ) + 'px';
@@ -92,6 +110,7 @@
     },
 
     xhr = function ( url, callback, i ) { // create new XMLHttpRequest object and run it
+
         try {
             var xhr = getXMLHttpRequest();
             xhr.open( 'GET', url, true );
@@ -108,7 +127,7 @@
             return v > 4 ? v : undef;
             }());
             
-            if ( ie >= 7 ){ //If IE is greater than 6
+            if ( true ){ //If IE is greater than 6
                 // This targets modern browsers and modern versions of IE,
                 // which don't need the "new" keyword.
                 xhr.onreadystatechange = function () {
@@ -151,7 +170,7 @@
         }
     },
 
-	// Test for Media Query support
+    // Test for Media Query support
     mediaQuery = function() {
         if (window.matchMedia || window.msMatchMedia) { return true; }
         return false;
@@ -165,7 +184,7 @@
             css = css.replace(/@media[\s\S]*?\}\s*\}/, "");
         }
 
-        return css;	
+        return css; 
     },
 
     getXMLHttpRequest = function () { // we're gonna check if our browser will let us use AJAX
@@ -186,12 +205,14 @@
 
     if( !cssremunit() ){ // this checks if the rem value is supported
         var rules = '', // initialize the rules variable in this scope so it can be used later
-            sheets = [], // initialize the array holding the sheets for use later
+            links = [], // initialize the array holding the sheets urls for use later
             found = [], // initialize the array holding the found rules for use later
             foundProps = [], // initialize the array holding the found properties for use later
             css = [], // initialize the array holding the parsed rules for use later
             body = document.getElementsByTagName('body')[0],
-            fontSize = '';
+            fontSize = '',
+            import_location = location.protocol + "//" + location.host + "/assets/";
+
         if (body.currentStyle) {
             if ( body.currentStyle.fontSize.indexOf("px") >= 0 ) {
                 fontSize = body.currentStyle.fontSize.replace('px', '');
@@ -205,7 +226,7 @@
         } else if (window.getComputedStyle) {
             fontSize = document.defaultView.getComputedStyle(body, null).getPropertyValue('font-size').replace('px', ''); // find font-size in body element
         }
-        processSheets();
+        processLinks();
     } // else { do nothing, you are awesome and have REM support }
 
 })(window);
