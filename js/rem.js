@@ -40,18 +40,17 @@
             pattern = /[\w\d\s\-\/\\\[\]:,.'"*()<>+~%#^$_=|@]+\{[\w\d\s\-\/\\%#:;,.'"*()]+\d*\.?\d+rem[\w\d\s\-\/\\%#:;,.'"*()]*\}/g, //find selectors that use rem in one or more of their rules
             current = clean.match(pattern),
             remPattern =/\d*\.?\d+rem/g,
-            remCurrent = clean.match(remPattern);
+            remCurrent = clean.match(remPattern),
+            sheetPathPattern = /(.*\/)/,
+            sheetPath = sheetPathPattern.exec(link)[0];
 
-        var import_pattern = /@import (?:url\(['"](.*)['"]\)|url\((.*)\)|['"](.*)['"]).*;/g;
-        var responseText = response.responseText;
-        var imported_lines = responseText.match(import_pattern);
+        var imports_regex = /@import (?:url\()?['"]?([^'\)"]*)['"]?\)?[^;]*/;
+        var imports_regex_global = /@import (?:url\()?['"]?([^'\)"]*)['"]?\)?[^;]*/gm;
+        var temp_result, matches;
 
-
-
-        if (imported_lines !== null) {
-            for ( var j = 0; j < imported_lines.length; j++) {
-                links.push(import_location + import_lines[j]);
-            }
+        while( (temp_result = imports_regex_global.exec(response.responseText)) !== null ){
+            matches = imports_regex.exec( temp_result[0] );
+            links.push( sheet_path + matches[1] );
         }
 
         if( current !== null && current.length !== 0 ){
@@ -210,8 +209,7 @@
             foundProps = [], // initialize the array holding the found properties for use later
             css = [], // initialize the array holding the parsed rules for use later
             body = document.getElementsByTagName('body')[0],
-            fontSize = '',
-            import_location = location.protocol + "//" + location.host + "/assets/";
+            fontSize = '';
 
         if (body.currentStyle) {
             if ( body.currentStyle.fontSize.indexOf("px") >= 0 ) {
