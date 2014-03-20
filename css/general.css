@@ -9,8 +9,8 @@ html {
 .test {
 	background-color:blue;
     color: white;
-	width: 10em;
-	height: 5rem;
+	width: 5rem;
+	height: 10em;
 }
 p {font-size: 5rem;}
 
@@ -22,5 +22,5 @@ p {font-size: 5rem;}
     p {
         font-size: 10rem;
     }
-    .test {background-color: green;}
+    .test {background-color: black;}
 }

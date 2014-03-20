@@ -50,7 +50,7 @@
 
         while( (temp_result = imports_regex_global.exec(response.responseText)) !== null ){
             matches = imports_regex.exec( temp_result[0] );
-            links.push( sheet_path + matches[1] );
+            links.push( sheetPath + matches[1] );
         }
 
         if( current !== null && current.length !== 0 ){

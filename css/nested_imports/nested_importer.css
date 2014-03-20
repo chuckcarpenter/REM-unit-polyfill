@@ -1,0 +1,18 @@
+/*Parent Directory and Same Line Test */
+@import url("../importee2.css"); @import url(nested_importee1.css);
+
+/*Media Query Test*/
+@import url("nested_importee2.css") screen;
+
+/*No URL test*/
+@import "nested_importee3.css";
+
+/*And Keyword Test*/
+@import url('nested_importee4.css') screen and (orientation:landscape);
+
+.nested-importer {
+  background-color:orange;
+  color: white;
+  width: 20rem;
+  height: 5em;
+}
