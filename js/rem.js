@@ -5,7 +5,6 @@
         var div = document.createElement( 'div' );
             div.style.cssText = 'font-size: 1rem;';
 
-        return false;
         return (/rem/).test(div.style.fontSize);
     },
 
@@ -29,9 +28,10 @@
             links = isStyleSheet(); // search for link tags and confirm it's a stylesheet
         }
 
+        //prepare to match each link
         for( var i = 0; i < links.length; i++ ){
-            var res = links.shift();
-            xhr( res, matchCSS, res, i++ );
+            var link = links.shift();
+            xhr( link, matchCSS, link, i++ );
         }
     },
     
@@ -42,15 +42,13 @@
             remPattern =/\d*\.?\d+rem/g,
             remCurrent = clean.match(remPattern),
             sheetPathPattern = /(.*\/)/,
-            sheetPath = sheetPathPattern.exec(link)[0];
+            sheetPath = sheetPathPattern.exec(link)[0]; //path to current css file
 
-        var imports_regex = /@import (?:url\()?['"]?([^'\)"]*)['"]?\)?[^;]*/;
-        var imports_regex_global = /@import (?:url\()?['"]?([^'\)"]*)['"]?\)?[^;]*/gm;
-        var temp_result, matches;
+        var imports_regex = /@import (?:url\()?['"]?([^'\)"]*)['"]?\)?[^;]*/gm;
+        var import_line;
 
-        while( (temp_result = imports_regex_global.exec(response.responseText)) !== null ){
-            matches = imports_regex.exec( temp_result[0] );
-            links.push( sheetPath + matches[1] );
+        while( (import_line = imports_regex.exec(response.responseText)) !== null ){
+            links.push( sheetPath + import_line[1] );
         }
 
         if( current !== null && current.length !== 0 ){
@@ -126,7 +124,7 @@
             return v > 4 ? v : undef;
             }());
             
-            if ( true ){ //If IE is greater than 6
+            if ( ie >= 7 ){ //If IE is greater than 6
                 // This targets modern browsers and modern versions of IE,
                 // which don't need the "new" keyword.
                 xhr.onreadystatechange = function () {
