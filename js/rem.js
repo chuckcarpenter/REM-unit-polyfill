@@ -42,13 +42,12 @@
             remPattern =/\d*\.?\d+rem/g,
             remCurrent = clean.match(remPattern),
             sheetPathPattern = /(.*\/)/,
-            sheetPath = sheetPathPattern.exec(link)[0]; //path to current css file
+            sheetPath = sheetPathPattern.exec(link)[0], //path to current css file
+            importPattern = /@import (?:url\()?['"]?([^'\)"]*)['"]?\)?[^;]*/gm, //matches all @import variations outlined at: https://developer.mozilla.org/en-US/docs/Web/CSS/@import
+            importStatement;
 
-        var imports_regex = /@import (?:url\()?['"]?([^'\)"]*)['"]?\)?[^;]*/gm;
-        var import_line;
-
-        while( (import_line = imports_regex.exec(response.responseText)) !== null ){
-            links.push( sheetPath + import_line[1] );
+        while( (importStatement = importPattern.exec(response.responseText)) !== null ){
+            links.push( sheetPath + importStatement[1] );
         }
 
         if( current !== null && current.length !== 0 ){
