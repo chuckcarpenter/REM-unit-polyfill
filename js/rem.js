@@ -28,11 +28,31 @@
             links = isStyleSheet(); // search for link tags and confirm it's a stylesheet
         }
 
+        links.og = links.length; // store the original length of sheets as a property
+        links.loaded = 0; // keep track of how many have been loaded so far
+
         //prepare to match each link
-        for( var i = 0; i < links.length; i++ ){
-            var link = links.shift();
-            xhr( link, matchCSS, link, i++ );
+        for( var i = 0; i < links.og; i++ ){
+            xhr( links[i], storeCSS, links[i], i++ );
         }
+    },
+
+    storeCSS = function ( response, i ) {
+
+        preCSS[i] = response;
+
+        if( ++links.loaded === links.og ){
+            for ( var j = 0; j < preCSS.length; j++ ){
+                matchCSS( preCSS[j] );
+            }
+
+            if( (links = importLinks).length > 0) {
+                processLinks();
+            } else {
+                buildCSS();
+            }
+        }
+
     },
     
     matchCSS = function ( response, link, i ) { // collect all of the rules from the xhr response texts and match them to a pattern
@@ -47,7 +67,7 @@
             importStatement;
 
         while( (importStatement = importPattern.exec(response.responseText)) !== null ){
-            links.push( sheetPath + importStatement[1] );
+            importLinks.push( sheetPath + importStatement[1] );
         }
 
         if( current !== null && current.length !== 0 ){
@@ -55,11 +75,6 @@
             foundProps = foundProps.concat( remCurrent ); // save all of the properties with rem
         }
 
-        if( links.length === 0 ){
-            buildCSS();
-        } else {
-            processLinks();
-        }
     },
 
     buildCSS = function () { // first build each individual rule from elements in the found array and then add it to the string of rules.
@@ -202,6 +217,7 @@
     if( !cssremunit() ){ // this checks if the rem value is supported
         var rules = '', // initialize the rules variable in this scope so it can be used later
             links = [], // initialize the array holding the sheets urls for use later
+            importLinks = [], //initialize the array holding the import sheet urls for use later
             found = [], // initialize the array holding the found rules for use later
             foundProps = [], // initialize the array holding the found properties for use later
             css = [], // initialize the array holding the parsed rules for use later
