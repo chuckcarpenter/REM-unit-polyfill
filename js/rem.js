@@ -4,7 +4,7 @@
     var cssremunit =  function() {
         var div = document.createElement( 'div' );
             div.style.cssText = 'font-size: 1rem;';
-            return false;
+
         return (/rem/).test(div.style.fontSize);
     },
 
@@ -139,7 +139,7 @@
             return v > 4 ? v : undef;
             }());
             
-            if ( true ){ //If IE is greater than 6
+            if ( ie >= 7 ){ //If IE is greater than 6
                 // This targets modern browsers and modern versions of IE,
                 // which don't need the "new" keyword.
                 xhr.onreadystatechange = function () {
