@@ -4,7 +4,7 @@
     var cssremunit =  function() {
         var div = document.createElement( 'div' );
             div.style.cssText = 'font-size: 1rem;';
-
+            return false;
         return (/rem/).test(div.style.fontSize);
     },
 
@@ -29,44 +29,46 @@
         }
 
         links.og = links.length; // store the original length of sheets as a property
-        links.loaded = 0; // keep track of how many have been loaded so far
 
         //prepare to match each link
         for( var i = 0; i < links.og; i++ ){
-            xhr( links[i], storeCSS, links[i], i++ );
+            xhr( links[i], storeCSS, links[i], i );
         }
     },
 
-    storeCSS = function ( response, i ) {
+    storeCSS = function ( response, link ) {
 
-        preCSS[i] = response;
+        preCSS.push(response.responseText);
+        CSSLinks.push(link);
 
-        if( ++links.loaded === links.og ){
-            for ( var j = 0; j < preCSS.length; j++ ){
-                matchCSS( preCSS[j] );
+        if( CSSLinks.length === links.og ){
+            for ( var j = 0; j < links.length; j++ ){
+                matchCSS( preCSS[j], CSSLinks[j] );
             }
 
-            if( (links = importLinks).length > 0) {
+            if( ( links = importLinks.slice(0) ).length > 0) {
+                CSSLinks = [];
+                preCSS = [];
+                importLinks = [];
                 processLinks();
             } else {
                 buildCSS();
             }
         }
-
     },
     
-    matchCSS = function ( response, link, i ) { // collect all of the rules from the xhr response texts and match them to a pattern
-        var clean = removeComments( removeMediaQueries(response.responseText) ),
+    matchCSS = function ( responseText, link ) { // collect all of the rules from the xhr response texts and match them to a pattern
+        var clean = removeComments( removeMediaQueries(responseText) ),
             pattern = /[\w\d\s\-\/\\\[\]:,.'"*()<>+~%#^$_=|@]+\{[\w\d\s\-\/\\%#:;,.'"*()]+\d*\.?\d+rem[\w\d\s\-\/\\%#:;,.'"*()]*\}/g, //find selectors that use rem in one or more of their rules
             current = clean.match(pattern),
             remPattern =/\d*\.?\d+rem/g,
             remCurrent = clean.match(remPattern),
             sheetPathPattern = /(.*\/)/,
-            sheetPath = sheetPathPattern.exec(link)[0], //path to current css file
+            sheetPath = sheetPathPattern.exec(link)[0], //relative path to css file specified in @import
             importPattern = /@import (?:url\()?['"]?([^'\)"]*)['"]?\)?[^;]*/gm, //matches all @import variations outlined at: https://developer.mozilla.org/en-US/docs/Web/CSS/@import
             importStatement;
 
-        while( (importStatement = importPattern.exec(response.responseText)) !== null ){
+        while( (importStatement = importPattern.exec(responseText)) !== null ){
             importLinks.push( sheetPath + importStatement[1] );
         }
 
@@ -74,7 +76,6 @@
             found = found.concat( current ); // save all of the blocks of rules with rem in a property
             foundProps = foundProps.concat( remCurrent ); // save all of the properties with rem
         }
-
     },
 
     buildCSS = function () { // first build each individual rule from elements in the found array and then add it to the string of rules.
@@ -138,7 +139,7 @@
             return v > 4 ? v : undef;
             }());
             
-            if ( ie >= 7 ){ //If IE is greater than 6
+            if ( true ){ //If IE is greater than 6
                 // This targets modern browsers and modern versions of IE,
                 // which don't need the "new" keyword.
                 xhr.onreadystatechange = function () {
@@ -149,8 +150,8 @@
             } else {
                 // This block targets old versions of IE, which require "new".
                 xhr.onreadystatechange = new function() { //IE6 and IE7 need the "new function()" syntax to work properly
-                    if ( xhr.readyState === 4 ){
-                        callback(xhr, i);
+                    if ( xhr.readyState === 4 ) {
+                        callback( xhr, i );
                     } // else { callback function on AJAX error }
                 };
             }
@@ -220,6 +221,8 @@
             importLinks = [], //initialize the array holding the import sheet urls for use later
             found = [], // initialize the array holding the found rules for use later
             foundProps = [], // initialize the array holding the found properties for use later
+            preCSS = [], // initialize array that holds css before being parsed
+            CSSLinks = [], //initialize array holding css links returned from xhr
             css = [], // initialize the array holding the parsed rules for use later
             body = document.getElementsByTagName('body')[0],
             fontSize = '';

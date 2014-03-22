@@ -1,8 +1,14 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-  <title>remReplace</title>
+  <title>REM Unit polyfill</title>
+  <!-- adding reference to Zurb Foundation for testing with larger file
+         that has REM values in it as well
+     -->
+  <link rel="stylesheet" type="text/css" href="css/foundation.css" />
+  <!-- Standard CSS with some REM values, media queries are ignored -->
   <link rel="stylesheet" type="text/css" href="css/general.css" />
+  <!-- CSS containing @import lines, test importing of additional sheets -->
   <link rel="stylesheet" type="text/css" href="css/importer.css" />
   <!-- ignore.css shows in normal browsers, but ones where we expect the REM.js to 
        run then the REM rules should not get parsed.

@@ -1,0 +1,26 @@
+{
+  "name": "rem",
+  "description": "A polyfill to parse CSS links and rewrite pixel equivalents into head for non supporting browsers",
+  "main": "rem.js",
+  "version": "1.1.0",
+  "authors": [
+    "Chuck Carpenter <chuck.carpenter@me.com>", 
+    "Lucas Serven <lserven@gmail.com>"
+  ],
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "matchdep": "~0.1.1",
+    "grunt-contrib-watch": "~0.4.4",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-contrib-uglify": "~0.2.5",
+    "grunt-contrib-jshint": "~0.8.0",
+    "karma": "~0.10.1",
+    "karma-mocha": "~0.1.0",
+    "karma-chrome-launcher": "~0.1.0",
+    "karma-ie-launcher": "~0.1.1",
+    "karma-firefox-launcher": "~0.1.0",
+    "karma-phantomjs-launcher": "~0.1.0",
+    "karma-safari-launcher": "~0.1.1"    
+  },
+  "dependencies": {}
+}
