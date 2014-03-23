@@ -11,16 +11,16 @@
     // filter returned links for stylesheets
     isStyleSheet = function () {
         var styles = document.getElementsByTagName('link'),
-            filteredStyles = [];
+            filteredLinks = [];
             
         for ( var i = 0; i < styles.length; i++) {
             if ( styles[i].rel.toLowerCase() === 'stylesheet' && styles[i].getAttribute('data-norem') === null ) {
 
-                filteredStyles.push( styles[i].href );
+                filteredLinks.push( styles[i].href );
             }
         }
 
-        return filteredStyles;
+        return filteredLinks;
     },
     
    processLinks = function () {
