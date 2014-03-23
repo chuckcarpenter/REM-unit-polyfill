@@ -4,7 +4,7 @@
     var cssremunit =  function() {
         var div = document.createElement( 'div' );
             div.style.cssText = 'font-size: 1rem;';
-
+            return false;
         return (/rem/).test(div.style.fontSize);
     },
 
@@ -28,10 +28,8 @@
             links = isStyleSheet(); // search for link tags and confirm it's a stylesheet
         }
 
-        links.og = links.length; // store the original length of sheets as a property
-
         //prepare to match each link
-        for( var i = 0; i < links.og; i++ ){
+        for( var i = 0; i < links.length; i++ ){
             xhr( links[i], storeCSS, links[i], i );
         }
     },
@@ -41,8 +39,8 @@
         preCSS.push(response.responseText);
         CSSLinks.push(link);
 
-        if( CSSLinks.length === links.og ){
-            for ( var j = 0; j < links.length; j++ ){
+        if( CSSLinks.length === links.length ){
+            for ( var j = 0; j <  CSSLinks.length; j++ ){
                 matchCSS( preCSS[j], CSSLinks[j] );
             }
 
@@ -139,7 +137,7 @@
             return v > 4 ? v : undef;
             }());
             
-            if ( ie >= 7 ){ //If IE is greater than 6
+            if ( true ){ //If IE is greater than 6
                 // This targets modern browsers and modern versions of IE,
                 // which don't need the "new" keyword.
                 xhr.onreadystatechange = function () {
