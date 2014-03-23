@@ -4,7 +4,7 @@
     var cssremunit =  function() {
         var div = document.createElement( 'div' );
             div.style.cssText = 'font-size: 1rem;';
-            return false;
+
         return (/rem/).test(div.style.fontSize);
     },
 
@@ -40,11 +40,11 @@
         CSSLinks.push(link);
 
         if( CSSLinks.length === links.length ){
-            for ( var j = 0; j <  CSSLinks.length; j++ ){
+            for( var j = 0; j <  CSSLinks.length; j++ ){
                 matchCSS( preCSS[j], CSSLinks[j] );
             }
 
-            if( ( links = importLinks.slice(0) ).length > 0) {
+            if( ( links = importLinks.slice(0) ).length > 0 ){ //after finishing all current links, set links equal to the new imports found
                 CSSLinks = [];
                 preCSS = [];
                 importLinks = [];
@@ -137,7 +137,7 @@
             return v > 4 ? v : undef;
             }());
             
-            if ( true ){ //If IE is greater than 6
+            if ( ie >= 7 ){ //If IE is greater than 6
                 // This targets modern browsers and modern versions of IE,
                 // which don't need the "new" keyword.
                 xhr.onreadystatechange = function () {
