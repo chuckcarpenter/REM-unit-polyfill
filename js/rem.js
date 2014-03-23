@@ -55,8 +55,8 @@
         }
     },
     
-    matchCSS = function ( responseText, link ) { // collect all of the rules from the xhr response texts and match them to a pattern
-        var clean = removeComments( removeMediaQueries(responseText) ),
+    matchCSS = function ( sheetCSS, link ) { // collect all of the rules from the xhr response texts and match them to a pattern
+        var clean = removeComments( removeMediaQueries(sheetCSS) ),
             pattern = /[\w\d\s\-\/\\\[\]:,.'"*()<>+~%#^$_=|@]+\{[\w\d\s\-\/\\%#:;,.'"*()]+\d*\.?\d+rem[\w\d\s\-\/\\%#:;,.'"*()]*\}/g, //find selectors that use rem in one or more of their rules
             current = clean.match(pattern),
             remPattern =/\d*\.?\d+rem/g,
@@ -66,7 +66,7 @@
             importPattern = /@import (?:url\()?['"]?([^'\)"]*)['"]?\)?[^;]*/gm, //matches all @import variations outlined at: https://developer.mozilla.org/en-US/docs/Web/CSS/@import
             importStatement;
 
-        while( (importStatement = importPattern.exec(responseText)) !== null ){
+        while( (importStatement = importPattern.exec(sheetCSS)) !== null ){
             importLinks.push( sheetPath + importStatement[1] );
         }
 
