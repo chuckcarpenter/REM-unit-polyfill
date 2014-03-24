@@ -7,9 +7,6 @@
 /*No URL test*/
 @import "nested_importee3.css";
 
-/*And Keyword Test*/
-@import url('nested_importee4.css') screen and (orientation:landscape);
-
 .nested-importer {
   background-color:orange;
   color: white;
