@@ -1,0 +1,12 @@
+/*Parent Directory and Same Line Test */
+@import url("../importee2.css"); @import url(nested_importee1.css);
+
+/*No URL test*/
+@import "nested_importee2.css";
+
+.nested-importer {
+  background-color:orange;
+  color: white;
+  width: 20rem;
+  height: 5em;
+}

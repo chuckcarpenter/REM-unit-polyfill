@@ -1,0 +1,11 @@
+/*Basic Test*/
+@import url("importee1.css");
+/*Folder Test*/
+@import 'nested_imports/nested_importer.css';
+
+.importer {
+  background-color: brown;
+  color: white;
+  width: 10rem;
+  height: 5em;
+}
