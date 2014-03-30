@@ -57,7 +57,7 @@
     
     matchCSS = function ( sheetCSS, link ) { // collect all of the rules from the xhr response texts and match them to a pattern
         var clean = removeComments( removeMediaQueries(sheetCSS) ),
-            pattern = /[\w\d\s\-\/\\\[\]:,.'"*()<>+~%#^$_=|@]+\{[\w\d\s\-\/\\%#:;,.'"*()]+\d*\.?\d+rem[\w\d\s\-\/\\%#:;,.'"*()]*\}/g, //find selectors that use rem in one or more of their rules
+            pattern = /[\w\d\s\-\/\\\[\]:,.'"*()<>+~%#^$_=|@]+\{[\w\d\s\-\/\\%#:!;,.'"*()]+\d*\.?\d+rem[\w\d\s\-\/\\%#:!;,.'"*()]*\}/g, //find selectors that use rem in one or more of their rules
             current = clean.match(pattern),
             remPattern =/\d*\.?\d+rem/g,
             remCurrent = clean.match(remPattern),
@@ -77,7 +77,7 @@
     },
 
     buildCSS = function () { // first build each individual rule from elements in the found array and then add it to the string of rules.
-        var pattern = /[\w\d\s\-\/\\%#:,.'"*()]+\d*\.?\d+rem[\w\d\s\-\/\\%#:,.'"*()]*[;}]/g; // find properties with rem values in them
+        var pattern = /[\w\d\s\-\/\\%#:,.'"*()]+\d*\.?\d+rem[\w\d\s\-\/\\%#:!,.'"*()]*[;}]/g; // find properties with rem values in them
         for( var i = 0; i < found.length; i++ ){
             rules = rules + found[i].substr(0,found[i].indexOf("{")+1); // save the selector portion of each rule with a rem value
             var current = found[i].match( pattern );
@@ -95,7 +95,7 @@
     parseCSS = function () { // replace each set of parentheses with evaluated content
     var remSize;
         for( var i = 0; i < foundProps.length; i++ ){
-            remSize = parseFloat(foundProps[i].substr(0,foundProps[i].length-3));
+            remSize = parseFloat(foundProps[i].replace(/\D/g,''));
             css[i] = Math.round( remSize * fontSize ) + 'px';
         }
 
