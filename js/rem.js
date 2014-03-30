@@ -154,13 +154,12 @@
     removeComments = function ( css ) {
         var start = css.search(/\/\*/),
             end = css.search(/\*\//);
-        if ( (start > -1) && (end > start) ) {
+        while ( (start > -1) && (end > start) ) {
             css = css.substring(0, start) + css.substring(end + 2);
-            return removeComments(css);
+            start = css.search(/\/\*/);
+            end = css.search(/\*\//);
         }
-        else {
-            return css;
-        }
+        return css;
     },
 
 	// Test for Media Query support
