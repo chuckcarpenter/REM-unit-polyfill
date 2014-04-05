@@ -2,9 +2,9 @@
   "name": "rem",
   "description": "A polyfill to parse CSS links and rewrite pixel equivalents into head for non supporting browsers",
   "main": "js/rem.js",
-  "version": "1.2.2",
+  "version": "1.2.4",
   "authors": [
-    "Chuck Carpenter <chuck.carpenter@me.com>", 
+    "Chuck Carpenter <chuck.carpenter@me.com>",
     "Lucas Serven <lserven@gmail.com>"
   ],
   "devDependencies": {
@@ -20,7 +20,7 @@
     "karma-ie-launcher": "~0.1.1",
     "karma-firefox-launcher": "~0.1.0",
     "karma-phantomjs-launcher": "~0.1.0",
-    "karma-safari-launcher": "~0.1.1"    
+    "karma-safari-launcher": "~0.1.1"
   },
   "dependencies": {}
 }
