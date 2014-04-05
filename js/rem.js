@@ -12,7 +12,7 @@
     isStyleSheet = function () {
         var styles = document.getElementsByTagName('link'),
             filteredLinks = [];
-            
+
         for ( var i = 0; i < styles.length; i++) {
             if ( styles[i].rel.toLowerCase() === 'stylesheet' && styles[i].getAttribute('data-norem') === null ) {
 
@@ -22,7 +22,7 @@
 
         return filteredLinks;
     },
-    
+
    processLinks = function () {
         if( links.length === 0 ){
             links = isStyleSheet(); // search for link tags and confirm it's a stylesheet
@@ -54,7 +54,7 @@
             }
         }
     },
-    
+
     matchCSS = function ( sheetCSS, link ) { // collect all of the rules from the xhr response texts and match them to a pattern
         var clean = removeComments( removeMediaQueries(sheetCSS) ),
             pattern = /[\w\d\s\-\/\\\[\]:,.'"*()<>+~%#^$_=|@]+\{[\w\d\s\-\/\\%#:!;,.'"*()]+\d*\.?\d+rem[\w\d\s\-\/\\%#:!;,.'"*()]*\}/g, //find selectors that use rem in one or more of their rules
@@ -93,10 +93,8 @@
     },
 
     parseCSS = function () { // replace each set of parentheses with evaluated content
-    var remSize;
         for( var i = 0; i < foundProps.length; i++ ){
-            remSize = parseFloat(foundProps[i].replace(/\D/g,''));
-            css[i] = Math.round( remSize * fontSize ) + 'px';
+            css[i] = Math.round( parseInt(foundProps[i].substr(0,foundProps[i].length-3)*fontSize, 10) ) + 'px';
         }
 
         loadCSS();
@@ -136,7 +134,7 @@
                 );
             return v > 4 ? v : undef;
             }());
-            
+
             if ( ie >= 7 ){ //If IE is greater than 6
                 // This targets modern browsers and modern versions of IE,
                 // which don't need the "new" keyword.
@@ -184,7 +182,7 @@
         if (window.matchMedia || window.msMatchMedia) { return true; }
         return false;
     },
-    
+
     // Remove queries.
     removeMediaQueries = function(css) {
         if (!mediaQuery()) {
@@ -224,7 +222,7 @@
             body = document.getElementsByTagName('body')[0],
             fontSize = '';
 
-        if (body.currentStyle) {
+        if ( !!body.currentStyle ) {
             if ( body.currentStyle.fontSize.indexOf("px") >= 0 ) {
                 fontSize = body.currentStyle.fontSize.replace('px', '');
             } else if ( body.currentStyle.fontSize.indexOf("em") >= 0 ) {

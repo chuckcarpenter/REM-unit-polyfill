@@ -9,12 +9,12 @@ html {
 .test {
 	background-color:black !important;
     color: white;
-	width: 5rem;
+	width: 5.5rem;
 	height: 5em;
 }
 p {font-size: 5rem;}
 
-/* These styles will only show in REM ready browsers. 
+/* These styles will only show in REM ready browsers.
    If you're expecting these to be ignored, but see a green box
    then something went wrong.
 */
