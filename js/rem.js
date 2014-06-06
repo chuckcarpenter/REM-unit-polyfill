@@ -135,7 +135,7 @@
             return v > 4 ? v : undef;
             }());
 
-            if ( ie >= 7 ){ //If IE is greater than 6
+            if ( ie >= 8 ){ //If IE is greater than 7
                 // This targets modern browsers and modern versions of IE,
                 // which don't need the "new" keyword.
                 xhr.onreadystatechange = function () {

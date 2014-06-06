@@ -1,9 +1,12 @@
 'use strict'
 module.exports = (grunt) ->
     # load all grunt tasks
-    # this assumes matchdep, grunt-contrib-watch, grunt-contrib-coffee, 
+    # this assumes matchdep, grunt-contrib-watch, grunt-contrib-coffee,
     # grunt-coffeelint, grunt-contrib-clean, grunt-contrib-uglify is in the package.json file
     require('matchdep').filterDev('grunt-*').forEach grunt.loadNpmTasks
+
+    # Timing on Grunt tasks completion
+    require('time-grunt') grunt
 
     grunt.initConfig
         # load in the module information
@@ -18,7 +21,7 @@ module.exports = (grunt) ->
                         ' * Copyright (c) <%= grunt.template.today("yyyy") %>' +
                         '  | <%= pkg.authors %>;\n' +
                         '**/\n'
-        
+
 
         # clear out any unneccessary files
         clean: ['js/<%= pkg.name %>.min.js']
@@ -40,9 +43,9 @@ module.exports = (grunt) ->
                 files:
                     'js/<%= pkg.name %>.min.js': 'js/<%= pkg.name %>.js'
 
-        ## TODO: add some tests                    
-    
- 
+        ## TODO: add some tests
+
+
     grunt.registerTask 'default', [
         'clean'
         'jshint'

@@ -17,5 +17,9 @@
     "strict": false,
     "trailing": true,
     "smarttabs": true,
-    "globals": {"define": false}
+    "globals": {
+        "define": false,
+        "XDomainRequest": false,
+        "ActiveXObject": false
+    }
 }

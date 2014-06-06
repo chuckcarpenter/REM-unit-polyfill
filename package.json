@@ -20,7 +20,8 @@
     "karma-ie-launcher": "~0.1.1",
     "karma-firefox-launcher": "~0.1.0",
     "karma-phantomjs-launcher": "~0.1.0",
-    "karma-safari-launcher": "~0.1.1"
+    "karma-safari-launcher": "~0.1.1",
+    "time-grunt": "^0.3.2"
   },
   "dependencies": {}
 }
