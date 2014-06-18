@@ -219,22 +219,37 @@
             preCSS = [], // initialize array that holds css before being parsed
             CSSLinks = [], //initialize array holding css links returned from xhr
             css = [], // initialize the array holding the parsed rules for use later
-            body = document.getElementsByTagName('body')[0],
             fontSize = '';
 
-        if ( !!body.currentStyle ) {
-            if ( body.currentStyle.fontSize.indexOf("px") >= 0 ) {
-                fontSize = body.currentStyle.fontSize.replace('px', '');
-            } else if ( body.currentStyle.fontSize.indexOf("em") >= 0 ) {
-                fontSize = body.currentStyle.fontSize.replace('em', '');
-            } else if ( body.currentStyle.fontSize.indexOf("pt") >= 0 ) {
-                fontSize = body.currentStyle.fontSize.replace('pt', '');
-            } else {
-                fontSize = (body.currentStyle.fontSize.replace('%', '') / 100) * 16; // IE8 returns the percentage while other browsers return the computed value
-            }
-        } else if (window.getComputedStyle) {
-            fontSize = document.defaultView.getComputedStyle(body, null).getPropertyValue('font-size').replace('px', ''); // find font-size in body element
-        }
+        fontSize = (function () {
+                var who = document.createElement('div'),
+                    currentSize,
+                    body = document.body || document.createElement("body"),
+                    size;
+               
+                who.style.cssText = 'line-height: 1; padding:0; position:absolute; visibility:hidden;';               
+                who.appendChild(document.createTextNode('M'));
+                
+                if (!document.body) {                    
+                    document.documentElement.appendChild(body);                 
+                }
+                
+                currentSize = body.style.fontSize;
+                body.style.fontSize = '1em';
+                body.appendChild(who);
+                size = who.offsetHeight;
+                body.style.fontSize = currentSize;
+                
+                if (!document.body) {
+                    document.documentElement.removeChild(body);
+                }
+                else {
+                    body.removeChild(who);
+                }
+                
+                return size;
+        }());
+        
         processLinks();
     } // else { do nothing, you are awesome and have REM support }
 
