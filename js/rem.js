@@ -94,7 +94,7 @@
 
     parseCSS = function () { // replace each set of parentheses with evaluated content
         for( var i = 0; i < foundProps.length; i++ ){
-            css[i] = Math.round( parseInt(foundProps[i].substr(0,foundProps[i].length-3)*fontSize, 10) ) + 'px';
+            css[i] = Math.round( parseFloat(foundProps[i].substr(0,foundProps[i].length-3)*fontSize) ) + 'px';
         }
 
         loadCSS();
