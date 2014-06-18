@@ -122,7 +122,7 @@
         try {
             var xhr = getXMLHttpRequest();
             xhr.open( 'GET', url, true );
-            xhr.send();
+            xhr.send(null);
             var ie = (function () { //function checking IE version
             var undef,
                 v = 3,
