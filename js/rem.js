@@ -120,22 +120,15 @@
     xhr = function ( url, callback, i ) { // create new XMLHttpRequest object and run it
 
         try {
-            var xhr = getXMLHttpRequest();
+            var xhr = getXMLHttpRequest(),
+                isIE = document.all;
+                
             xhr.open( 'GET', url, true );
             xhr.send(null);
-            var ie = (function () { //function checking IE version
-            var undef,
-                v = 3,
-                div = document.createElement('div'),
-                all = div.getElementsByTagName('i');
-                while (
-                    div.innerHTML = '<!--[if gt IE ' + (++v) + ']><i></i><![endif]-->',
-                    all[0]
-                );
-            return v > 4 ? v : undef;
-            }());
-
-            if ( ie >= 7 || ie == undefined){ //If IE is greater than 6
+            
+            // Better way for IE versions detection: http://tanalin.com/en/articles/ie-version-js/
+            
+            if ( !isIE || (isIE && window.XMLHttpRequest) ){ //If IE is greater than 6
                 // This targets modern browsers and modern versions of IE,
                 // which don't need the "new" keyword.
                 xhr.onreadystatechange = function () {
@@ -145,7 +138,7 @@
                 };
             } else {
                 // This block targets old versions of IE, which require "new".
-                xhr.onreadystatechange = new function() { //IE6 and IE7 need the "new function()" syntax to work properly
+                xhr.onreadystatechange = new function() { //IE6 need the "new function()" syntax to work properly
                     if ( xhr.readyState === 4 ) {
                         callback( xhr, i );
                     } // else { callback function on AJAX error }
