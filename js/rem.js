@@ -121,14 +121,14 @@
 
         try {
             var xhr = getXMLHttpRequest(),
-                isIE = document.all;
+                isOldIE = document.all;
                 
             xhr.open( 'GET', url, true );
             xhr.send(null);
             
             // Better way for IE versions detection: http://tanalin.com/en/articles/ie-version-js/
             
-            if ( !isIE || (isIE && window.XMLHttpRequest) ){ //If IE is greater than 6
+            if ( !isOldIE || (isOldIE && window.XMLHttpRequest) ){ //If IE is greater than 6
                 // This targets modern browsers and modern versions of IE,
                 // which don't need the "new" keyword.
                 xhr.onreadystatechange = function () {
