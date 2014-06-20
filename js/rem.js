@@ -214,33 +214,39 @@
             css = [], // initialize the array holding the parsed rules for use later
             fontSize = '';
 
+        // Notice: rem is a "root em" that means that in case when html element size was changed by css 
+        // or style we should not change document.documentElement.fontSize to 1em - only body size should be changed 
+        // to 1em for calculation
+            
         fontSize = (function () {
-                var who = document.createElement('div'),
-                    currentSize,
-                    body = document.body || document.createElement("body"),
-                    size;
+            var doc = document,
+                docElement = doc.documentElement,
+                body = doc.body || doc.createElement('body'),
+                isFakeBody = !doc.body,
+                div = doc.createElement('div'),                    
+                currentSize = body.style.fontSize,
+                size;
+                
+            if ( isFakeBody ) {
+                docElement.appendChild( body );
+            }
                
-                who.style.cssText = 'line-height: 1; padding:0; position:absolute; visibility:hidden;';               
-                who.appendChild(document.createTextNode('M'));
+            div.style.cssText = 'width:1em; position:absolute; visibility:hidden; padding: 0;';               
                 
-                if (!document.body) {                    
-                    document.documentElement.appendChild(body);                 
-                }
+            body.style.fontSize = '1em';
                 
-                currentSize = body.style.fontSize;
-                body.style.fontSize = '1em';
-                body.appendChild(who);
-                size = who.offsetHeight;
-                body.style.fontSize = currentSize;
+            body.appendChild( div );
+            size = div.offsetWidth;
                 
-                if (!document.body) {
-                    document.documentElement.removeChild(body);
-                }
-                else {
-                    body.removeChild(who);
-                }
+            if ( isFakeBody ) {
+                docElement.removeChild( body );
+            }
+            else {
+                body.removeChild( div );
+                body.style.fontSize = currentSize;                     
+            }
                 
-                return size;
+            return size;
         }());
         
         processLinks();
