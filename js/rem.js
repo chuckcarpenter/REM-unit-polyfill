@@ -94,7 +94,7 @@
 
     parseCSS = function () { // replace each set of parentheses with evaluated content
         for( var i = 0; i < foundProps.length; i++ ){
-            css[i] = Math.round( parseInt(foundProps[i].substr(0,foundProps[i].length-3)*fontSize, 10) ) + 'px';
+            css[i] = Math.round( parseFloat(foundProps[i].substr(0,foundProps[i].length-3)*fontSize) ) + 'px';
         }
 
         loadCSS();
@@ -120,22 +120,15 @@
     xhr = function ( url, callback, i ) { // create new XMLHttpRequest object and run it
 
         try {
-            var xhr = getXMLHttpRequest();
+            var xhr = getXMLHttpRequest(),
+                isOldIE = document.all;
+                
             xhr.open( 'GET', url, true );
-            xhr.send();
-            var ie = (function () { //function checking IE version
-            var undef,
-                v = 3,
-                div = document.createElement('div'),
-                all = div.getElementsByTagName('i');
-                while (
-                    div.innerHTML = '<!--[if gt IE ' + (++v) + ']><i></i><![endif]-->',
-                    all[0]
-                );
-            return v > 4 ? v : undef;
-            }());
-
-            if ( ie >= 7 ){ //If IE is greater than 6
+            xhr.send(null);
+            
+            // Better way for IE versions detection: http://tanalin.com/en/articles/ie-version-js/
+            
+            if ( !isOldIE || (isOldIE && window.XMLHttpRequest) ){ //If IE is greater than 6
                 // This targets modern browsers and modern versions of IE,
                 // which don't need the "new" keyword.
                 xhr.onreadystatechange = function () {
@@ -145,7 +138,7 @@
                 };
             } else {
                 // This block targets old versions of IE, which require "new".
-                xhr.onreadystatechange = new function() { //IE6 and IE7 need the "new function()" syntax to work properly
+                xhr.onreadystatechange = new function() { //IE6 need the "new function()" syntax to work properly
                     if ( xhr.readyState === 4 ) {
                         callback( xhr, i );
                     } // else { callback function on AJAX error }
@@ -188,7 +181,7 @@
         if (!mediaQuery()) {
             // If the browser doesn't support media queries, we find all @media declarations in the CSS and remove them.
             // Note: Since @rules can't be nested in the CSS spec, we're safe to just check for the closest following "}}" to the "@media".
-            css = css.replace(/@media[\s\S]*?\}\s*\}/, "");
+            css = css.replace(/@media[\s\S]*?\}\s*\}/g, "");
         }
 
         return css;
@@ -219,22 +212,43 @@
             preCSS = [], // initialize array that holds css before being parsed
             CSSLinks = [], //initialize array holding css links returned from xhr
             css = [], // initialize the array holding the parsed rules for use later
-            body = document.getElementsByTagName('body')[0],
             fontSize = '';
 
-        if ( !!body.currentStyle ) {
-            if ( body.currentStyle.fontSize.indexOf("px") >= 0 ) {
-                fontSize = body.currentStyle.fontSize.replace('px', '');
-            } else if ( body.currentStyle.fontSize.indexOf("em") >= 0 ) {
-                fontSize = body.currentStyle.fontSize.replace('em', '');
-            } else if ( body.currentStyle.fontSize.indexOf("pt") >= 0 ) {
-                fontSize = body.currentStyle.fontSize.replace('pt', '');
-            } else {
-                fontSize = (body.currentStyle.fontSize.replace('%', '') / 100) * 16; // IE8 returns the percentage while other browsers return the computed value
+        // Notice: rem is a "root em" that means that in case when html element size was changed by css 
+        // or style we should not change document.documentElement.fontSize to 1em - only body size should be changed 
+        // to 1em for calculation
+            
+        fontSize = (function () {
+            var doc = document,
+                docElement = doc.documentElement,
+                body = doc.body || doc.createElement('body'),
+                isFakeBody = !doc.body,
+                div = doc.createElement('div'),                    
+                currentSize = body.style.fontSize,
+                size;
+                
+            if ( isFakeBody ) {
+                docElement.appendChild( body );
             }
-        } else if (window.getComputedStyle) {
-            fontSize = document.defaultView.getComputedStyle(body, null).getPropertyValue('font-size').replace('px', ''); // find font-size in body element
-        }
+               
+            div.style.cssText = 'width:1em; position:absolute; visibility:hidden; padding: 0;';               
+                
+            body.style.fontSize = '1em';
+                
+            body.appendChild( div );
+            size = div.offsetWidth;
+                
+            if ( isFakeBody ) {
+                docElement.removeChild( body );
+            }
+            else {
+                body.removeChild( div );
+                body.style.fontSize = currentSize;                     
+            }
+                
+            return size;
+        }());
+        
         processLinks();
     } // else { do nothing, you are awesome and have REM support }
 
