@@ -122,16 +122,16 @@
         try {
             var xhr = getXMLHttpRequest(),
                 isOldIE = document.all;
-                
+
             xhr.open( 'GET', url, true );
             xhr.send(null);
-            
+
             // Better way for IE versions detection: http://tanalin.com/en/articles/ie-version-js/
-            
+
             if ( !isOldIE || (isOldIE && window.XMLHttpRequest) ){ //If IE is greater than 6
                 // This targets modern browsers and modern versions of IE,
                 // which don't need the "new" keyword.
-                xhr.onreadystatechange = function () {
+                xhr.onreadystatechange = function() {
                     if ( xhr.readyState === 4 ){
                         callback(xhr, i);
                     } // else { callback function on AJAX error }
@@ -214,41 +214,41 @@
             css = [], // initialize the array holding the parsed rules for use later
             fontSize = '';
 
-        // Notice: rem is a "root em" that means that in case when html element size was changed by css 
-        // or style we should not change document.documentElement.fontSize to 1em - only body size should be changed 
+        // Notice: rem is a "root em" that means that in case when html element size was changed by css
+        // or style we should not change document.documentElement.fontSize to 1em - only body size should be changed
         // to 1em for calculation
-            
+
         fontSize = (function () {
             var doc = document,
                 docElement = doc.documentElement,
                 body = doc.body || doc.createElement('body'),
                 isFakeBody = !doc.body,
-                div = doc.createElement('div'),                    
+                div = doc.createElement('div'),
                 currentSize = body.style.fontSize,
                 size;
-                
+
             if ( isFakeBody ) {
                 docElement.appendChild( body );
             }
-               
-            div.style.cssText = 'width:1em; position:absolute; visibility:hidden; padding: 0;';               
-                
+
+            div.style.cssText = 'width:1em; position:absolute; visibility:hidden; padding: 0;';
+
             body.style.fontSize = '1em';
-                
+
             body.appendChild( div );
             size = div.offsetWidth;
-                
+
             if ( isFakeBody ) {
                 docElement.removeChild( body );
             }
             else {
                 body.removeChild( div );
-                body.style.fontSize = currentSize;                     
+                body.style.fontSize = currentSize;
             }
-                
+
             return size;
         }());
-        
+
         processLinks();
     } // else { do nothing, you are awesome and have REM support }
 
