@@ -118,33 +118,25 @@
     },
 
     xhr = function ( url, callback, i ) { // create new XMLHttpRequest object and run it
-
         try {
-            var xhr = getXMLHttpRequest(),
-                isOldIE = document.all;
+            //try to create a request object
+            //arranging the two conditions this way is for IE7/8's benefit
+            //so that it works with any combination of ActiveX or Native XHR settings, 
+            //as long as one or the other is enabled; but if both are enabled
+            //it prefers ActiveX, which means it still works with local files
+            //(Native XHR in IE7/8 is blocked and throws "access is denied",
+            // but ActiveX is permitted if the user allows it [default is to prompt])
+            var xhr = window.ActiveXObject ? (new ActiveXObject('Microsoft.XMLHTTP') || new ActiveXObject("Msxml2.XMLHTTP")) : new XMLHttpRequest();
 
             xhr.open( 'GET', url, true );
+            xhr.onreadystatechange = function() {
+                if ( xhr.readyState === 4 ){
+                    callback(xhr, i);
+                } // else { callback function on AJAX error }
+            };
+
             xhr.send(null);
-
-            // Better way for IE versions detection: http://tanalin.com/en/articles/ie-version-js/
-
-            if ( !isOldIE || (isOldIE && window.XMLHttpRequest) ){ //If IE is greater than 6
-                // This targets modern browsers and modern versions of IE,
-                // which don't need the "new" keyword.
-                xhr.onreadystatechange = function() {
-                    if ( xhr.readyState === 4 ){
-                        callback(xhr, i);
-                    } // else { callback function on AJAX error }
-                };
-            } else {
-                // This block targets old versions of IE, which require "new".
-                xhr.onreadystatechange = new function() { //IE6 need the "new function()" syntax to work properly
-                    if ( xhr.readyState === 4 ) {
-                        callback( xhr, i );
-                    } // else { callback function on AJAX error }
-                };
-            }
-         } catch (e){
+        } catch (e){
             if ( window.XDomainRequest ) {
                 var xdr = new XDomainRequest();
                 xdr.open('get', url);
@@ -156,7 +148,7 @@
                 };
                 xdr.send();
             }
-         }
+        }
     },
 
     removeComments = function ( css ) {
@@ -185,22 +177,6 @@
         }
 
         return css;
-    },
-
-    getXMLHttpRequest = function () { // we're gonna check if our browser will let us use AJAX
-        if (window.XMLHttpRequest) {
-            return new XMLHttpRequest();
-        } else { // if XMLHttpRequest doesn't work
-            try {
-                return new ActiveXObject("MSXML2.XMLHTTP"); // then we'll instead use AJAX through ActiveX for IE6/IE7
-            } catch (e1) {
-                try {
-                    return new ActiveXObject("Microsoft.XMLHTTP"); // other microsoft
-                } catch (e2) {
-                    // No XHR at all...
-                }
-            }
-        }
     };
 
     if( !cssremunit() ){ // this checks if the rem value is supported
