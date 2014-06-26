@@ -56,7 +56,7 @@
     },
 
     matchCSS = function ( sheetCSS, link ) { // collect all of the rules from the xhr response texts and match them to a pattern
-        var clean = removeComments( removeMediaQueries(sheetCSS) ),
+        var clean = removeMediaQueries(sheetCSS).replace(/\/\*[\s\S]*?\*\//g, ''), // remove MediaQueries and comments
             pattern = /[\w\d\s\-\/\\\[\]:,.'"*()<>+~%#^$_=|@]+\{[\w\d\s\-\/\\%#:!;,.'"*()]+\d*\.?\d+rem[\w\d\s\-\/\\%#:!;,.'"*()]*\}/g, //find selectors that use rem in one or more of their rules
             current = clean.match(pattern),
             remPattern =/\d*\.?\d+rem/g,
@@ -149,17 +149,6 @@
                 xdr.send();
             }
         }
-    },
-
-    removeComments = function ( css ) {
-        var start = css.search(/\/\*/),
-            end = css.search(/\*\//);
-        while ( (start > -1) && (end > start) ) {
-            css = css.substring(0, start) + css.substring(end + 2);
-            start = css.search(/\/\*/);
-            end = css.search(/\*\//);
-        }
-        return css;
     },
 
     // Test for Media Query support
