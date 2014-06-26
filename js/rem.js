@@ -24,13 +24,9 @@
     },
 
    processLinks = function () {
-        if( links.length === 0 ){
-            links = isStyleSheet(); // search for link tags and confirm it's a stylesheet
-        }
-
         //prepare to match each link
         for( var i = 0; i < links.length; i++ ){
-            xhr( links[i], storeCSS, links[i], i );
+            xhr( links[i], storeCSS );
         }
     },
 
@@ -56,7 +52,7 @@
     },
 
     matchCSS = function ( sheetCSS, link ) { // collect all of the rules from the xhr response texts and match them to a pattern
-        var clean = removeMediaQueries(sheetCSS).replace(/\/\*[\s\S]*?\*\//g, ''), // remove MediaQueries and comments
+        var clean = removeMediaQueries( sheetCSS ).replace(/\/\*[\s\S]*?\*\//g, ''), // remove MediaQueries and comments
             pattern = /[\w\d\s\-\/\\\[\]:,.'"*()<>+~%#^$_=|@]+\{[\w\d\s\-\/\\%#:!;,.'"*()]+\d*\.?\d+rem[\w\d\s\-\/\\%#:!;,.'"*()]*\}/g, //find selectors that use rem in one or more of their rules
             current = clean.match(pattern),
             remPattern =/\d*\.?\d+rem/g,
@@ -117,7 +113,7 @@
         }
     },
 
-    xhr = function ( url, callback, i ) { // create new XMLHttpRequest object and run it
+    xhr = function ( url, callback ) { // create new XMLHttpRequest object and run it
         try {
             //try to create a request object
             //arranging the two conditions this way is for IE7/8's benefit
@@ -126,22 +122,22 @@
             //it prefers ActiveX, which means it still works with local files
             //(Native XHR in IE7/8 is blocked and throws "access is denied",
             // but ActiveX is permitted if the user allows it [default is to prompt])
-            var xhr = window.ActiveXObject ? (new ActiveXObject('Microsoft.XMLHTTP') || new ActiveXObject("Msxml2.XMLHTTP")) : new XMLHttpRequest();
+            var xhr = window.ActiveXObject ? ( new ActiveXObject('Microsoft.XMLHTTP') || new ActiveXObject('Msxml2.XMLHTTP') ) : new XMLHttpRequest();
 
             xhr.open( 'GET', url, true );
             xhr.onreadystatechange = function() {
                 if ( xhr.readyState === 4 ){
-                    callback(xhr, i);
+                    callback(xhr, url);
                 } // else { callback function on AJAX error }
             };
 
-            xhr.send(null);
+            xhr.send( null );
         } catch (e){
             if ( window.XDomainRequest ) {
                 var xdr = new XDomainRequest();
                 xdr.open('get', url);
                 xdr.onload = function() {
-                    callback(xdr, i);
+                    callback(xdr, url);
                 };
                 xdr.onerror = function() {
                     return false; // xdr load fail
@@ -151,15 +147,10 @@
         }
     },
 
-    // Test for Media Query support
-    mediaQuery = function() {
-        if (window.matchMedia || window.msMatchMedia) { return true; }
-        return false;
-    },
-
     // Remove queries.
     removeMediaQueries = function(css) {
-        if (!mediaQuery()) {
+        // Test for Media Query support
+        if ( !window.matchMedia && !window.msMatchMedia ) {
             // If the browser doesn't support media queries, we find all @media declarations in the CSS and remove them.
             // Note: Since @rules can't be nested in the CSS spec, we're safe to just check for the closest following "}}" to the "@media".
             css = css.replace(/@media[\s\S]*?\}\s*\}/g, "");
@@ -170,7 +161,7 @@
 
     if( !cssremunit() ){ // this checks if the rem value is supported
         var rules = '', // initialize the rules variable in this scope so it can be used later
-            links = [], // initialize the array holding the sheets urls for use later
+            links = isStyleSheet(), // initialize the array holding the sheets urls for use later
             importLinks = [], //initialize the array holding the import sheet urls for use later
             found = [], // initialize the array holding the found rules for use later
             foundProps = [], // initialize the array holding the found properties for use later
