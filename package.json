@@ -2,7 +2,7 @@
   "name": "rem",
   "description": "A polyfill to parse CSS links and rewrite pixel equivalents into head for non supporting browsers",
   "main": "js/rem.js",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "authors": [
     "Chuck Carpenter <chuck.carpenter@me.com>",
     "Lucas Serven <lserven@gmail.com>"
