@@ -18,6 +18,10 @@ In some cases you may want the polyfill to skip some stylesheets; if that's you 
 
 This repo includes a small example so you can bring up the polyfill in your browser to see how it works.
 
+Install using Bower
+-------------------
+`bower install REM-unit-polyfill`
+
 License
 -------
 
