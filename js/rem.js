@@ -63,7 +63,11 @@
             importStatement;
 
         while( (importStatement = importPattern.exec(sheetCSS)) !== null ){
-            importLinks.push( sheetPath + importStatement[1] );
+            if( importStatement[1].indexOf("/") === 0 ) { // check if the value of importStatement[1] is a root relative path, in which case it shouldn't be concatenated with sheetPath
+                importLinks.push( importStatement[1] );
+            } else {
+                importLinks.push( sheetPath + importStatement[1] );
+            }
         }
 
         if( current !== null && current.length !== 0 ){
